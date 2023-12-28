@@ -1,7 +1,8 @@
 import Routes from './routes.js'
-import testData from './testToken.json' assert {type: 'json'}
 
 class API {
+
+    #initData = "query_id=AAHUWZZ3AAAAANRZlnfYKkqY&    user=%7B%22id%22%3A2006342100%2C%22first_name%22%3A%22%D0%AE%D1%80%D1%96%D0%B9%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22lyubchak%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1697117294&hash=dc39d00ad19160a006b7737be6ee9c6def17a723302b9985ad5aa088c8b6fef2";
 
     // by default token expired time = 30 minutes
     #getNewExpiredTime() {
@@ -105,7 +106,7 @@ class API {
         let initData = window.Telegram?.WebApp?.initData;
 
         if(typeof initData === 'undefined' || initData === null)
-            initData = testData.initData;
+            initData = this.#initData;
 
         route.url.searchParams.append("initData", initData);
 

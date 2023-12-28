@@ -9,7 +9,6 @@ import TeamController from './team.js';
 
 window.onload = async () => {
 
-    
     initIcons();
 
     API.send("GET_ADAPTATION_SCENARIO")

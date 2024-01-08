@@ -10,6 +10,12 @@ import ERRORS from './errors.js';
 
 window.onload = async () => {
 
+    if(Utils.isTelegramClient) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.exapnd();
+        window.Telegram.WebApp.enableClosingConfirmation()
+    }
+    
     loading();
 
     initIcons();

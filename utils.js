@@ -263,11 +263,14 @@ class Utils {
                 this.blur();
             });
 
-            tx[i].addEventListener("focusout", function() {
+            tx[i].addEventListener("focusout", function(e) {
+                e.preventDefault();
                 document.activeElement.blur();
+                document.elementFromPoint(i.x, i.y);
             });
 
-            tx[i].addEventListener("touchleave", function() {
+            tx[i].addEventListener("touchend", function(e) {
+                e.preventDefault();
                 document.activeElement.blur();
                 document.elementFromPoint(i.x, i.y);
             });

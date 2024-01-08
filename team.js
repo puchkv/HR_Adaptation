@@ -20,6 +20,9 @@ class TeamController {
 
 
     #view() {
+
+        let mentorIsHead = Object.is(this.#members.head.n_kdk, this.#members.mentor.n_kdk);
+
         let html = `
             <div class="roulette">
 
@@ -28,11 +31,20 @@ class TeamController {
                 </div>
 
                 <div class="cards expanded">
-                ${this.#getMemberCard(this.#members.head, "Керівник")}
-                    ${this.#getMemberCard(this.#members.mentor, "Наставник")}
-                    ${this.#getMemberCard(this.#members.hr, "HR менеджер")}
-                </div>
         `;
+
+        if(mentorIsHead) 
+        {
+            html += this.#getMemberCard(this.#members.head, "Керівник та наставник");
+        }
+        else 
+        {
+            html += this.#getMemberCard(this.#members.head, "Керівник");
+            html += this.#getMemberCard(this.#members.mentor, "Наставник");
+        }
+
+        html += this.#getMemberCard(this.#members.hr, "HR менеджер");
+        html += `</div>`;
 
         html += `
             <div class="roulette-header">
@@ -86,7 +98,7 @@ class TeamController {
                         '<svg><use href="#profile"/></svg>'
                     }
                 </div>
-                <div>
+                <div class='member-card'>
                     <span style="font-weight: bold;">
                         ${
                             member.fam + ' ' + 

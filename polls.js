@@ -1,16 +1,20 @@
 import Utils from "./utils.js";
 import API from './API2.js';
+import User from './user.js';
 
 class PollsController {
 
     #section = 'polls';
     #element = '';
     #polls = [];
+    #User = null;
     
     currentPoll = 0;
 
-    initialize(polls) 
+    initialize(polls, user) 
     {
+        this.#User = user;
+
         if(polls === null || typeof polls === 'undefined' || 
             !Array.isArray(polls) || polls.length <= 0) 
         {
@@ -27,6 +31,9 @@ class PollsController {
 
     start(poll) {
 
+        console.log(`poll started`);
+        console.log(poll);
+
         if(poll == null || typeof poll === 'undefined')
             return console.warn(`PollsController.start(): Poll with id ${poll.id} not found!`);
         
@@ -34,7 +41,7 @@ class PollsController {
         let html = `
             <h3>${poll.subject}</h3>
 
-            <form method="POST" id="activePoll" data-poll="${poll.id}">
+            <form id="activePoll" data-poll="${poll.id}">
                 <div class="cards expanded">`;
 
         for(let q of poll.questions) {
@@ -48,7 +55,7 @@ class PollsController {
                     //<svg><use href="#checkmark"/></svg>
                     html += `
                         <div class="custom-radio">
-                            <input id="${ans.id}" type="radio" name="${q.id}" value="${ans.id}">
+                            <input id="${ans.id}" type="radio" name="${q.id}" value="${ans.id}"/>
                             <div></div>
                             <label for="${ans.id}">${ans.text}</label>
                         </div>`;
@@ -92,17 +99,17 @@ class PollsController {
         Utils.loadScreen('pollPassing');
         Utils.checkInputs();
 
-        Utils.showMainButton('Надіслати відповіді').onclick = () => {
-            PollsController.prototype.post();
-        };
+        Utils.showMainButton('Надіслати відповіді', () => this.post());
+        Utils.showBackButton(() => this.view(poll.id));
     }
 
     post() {
-        let questions = document.getElementById('activePoll').getElementsByClassName("card");
+
         let inputs = document.getElementById('activePoll').getElementsByTagName("input");
         let textInputs = document.getElementById('activePoll').getElementsByTagName("textarea");
 
-        let emptyQuestionId = this.isAnyEmptyAnswer(questions);
+        let emptyQuestionId = this.isAnyEmptyAnswer();
+        console.log(emptyQuestionId);
 
         if(emptyQuestionId !== '') {
             let elem = document.getElementById(emptyQuestionId);
@@ -112,11 +119,13 @@ class PollsController {
                 block: "center",
             });
 
+            window.Telegram.WebApp.showAlert("Вкажіть відповідь на питання!");
+
             setTimeout(() => {
                 elem.classList.remove("empty-field");
             }, 2000, elem);
 
-            return;
+            return false;
         }
 
         var data = { "answers": new Array() };
@@ -131,26 +140,32 @@ class PollsController {
                 data.answers.push({id: text.id, text: text.value});
         }
 
-
         API.send("POST_POLL_ANSWERS", JSON.stringify(data))
             .then(response => {
                 if(typeof response !== 'undefined' && response.success) {
-                    Utils.loadScreen('pollSuccess');
+                    
+                    Utils.showAnimation("party", "Результати опитування надіслано!", false);
 
-                    Utils.showMainButton('На головну').onclick = () => {
+                    Utils.showMainButton('На головну', function() {
                         window.location.reload();
-                    }
+                    });
+
+                    Utils.hideBackButton();
 
                 } else {
                     console.error(`POST ANSWERS: ${response?.data?.message}`);
                 }
             })
             .catch(err => {
-                console.error(err);
+                window.dispatchEvent(new CustomEvent("app-failed", { detail: err }));
             });        
     }
 
-    isAnyEmptyAnswer(questions) {
+    isAnyEmptyAnswer() {
+
+        console.log("any answer checked CALLED");
+
+        let questions = document.getElementById('activePoll').querySelectorAll(".card");
 
         for(let q of questions) {
             let checks = q.querySelectorAll("input:checked");
@@ -224,19 +239,16 @@ class PollsController {
         `;
 
         Utils.loadScreen('pollStart');
-        Utils.hideNav();
 
         if(poll.status) 
         {
-            Utils.showMainButton('Переглянути відповіді').onclick = () => {
-                PollsController.prototype.seeAnswers(poll);
-            };
+            Utils.showMainButton('Переглянути відповіді', () => this.seeAnswers(poll));
+            Utils.showBackButton(() => Utils.loadScreen('polls'));
         }
         else 
         {
-            Utils.showMainButton('Почати опитування').onclick = () => {
-                PollsController.prototype.start(poll);
-            };
+            Utils.showMainButton('Почати опитування', () => this.start(poll));
+            Utils.showBackButton(() => Utils.loadScreen('polls'));
         }
     }
 
@@ -308,11 +320,11 @@ class PollsController {
         Utils.loadScreen('pollPassing');
         Utils.checkInputs();
 
-        Utils.showMainButton('Повернутись').onclick = () => {
+        Utils.showMainButton('Повернутись', function() {
             Utils.loadScreen('polls');
             Utils.showNav();
             Utils.hideMainButton();
-        };
+        });
     }
 
 
@@ -326,7 +338,20 @@ class PollsController {
             `;
         }
 
-        if(this.#polls.some(p => p.status == false)) {
+        let polls = null;
+
+        switch(this.#User.Role) {
+            case User.Roles.Newbee: polls = this.#polls.filter(p => p.recipient_type_id == 1); break;
+            case User.Roles.Mentor: polls = this.#polls.filter(p => p.recipient_type_id == 2); break;
+            case User.Roles.HR: polls = this.#polls; break;
+            default: polls = null; break;
+        }
+
+        if(polls == null) {
+            return this.showEmpty();
+        }
+
+        if(polls.some(p => p.status == false)) {
 
             html += `
                 <div class="roulette-header">
@@ -336,12 +361,42 @@ class PollsController {
                 <div class="cards expanded">
                 `;
 
-            for(let poll of this.#polls.filter(p => p.status == false)) {
-                html += this.#getCardHtml(poll);
+            // HR-фахівець бачить опитування всіх
+            if(this.#User.isHR) {
+
+                // Опитування керівника
+                let mentorPolls = polls.filter(p => p.recipient_type_id == 2 && p.status == false);
+                
+                if(mentorPolls.length > 0) {
+                    html += `<h5>Керівника</h5>`;
+                    for(let poll of mentorPolls) {
+                        html += this.#getCardHtml(poll);
+                    }
+                }
+
+                // Опитування новачка
+                let newbeePolls = polls.filter(p => p.recipient_type_id == 1 && p.status == false);
+
+                if(newbeePolls.length > 0) {
+                    html += `<h5>Новачка</h5>`;
+                    for(let poll of newbeePolls) {
+                        html += this.#getCardHtml(poll);
+                    }
+                }
             }
+            else
+            {
+                for(let poll of polls) {
+                    html += this.#getCardHtml(poll);
+                }
+            }
+
+            // for(let poll of this.#polls.filter(p => p.status == false)) {
+            //     html += this.#getCardHtml(poll);
+            // }
         }
 
-        html += '</div>';
+        html += '</div>';   
 
         if(this.#polls.some(p => p.status == true)) {
 
@@ -353,8 +408,34 @@ class PollsController {
                 <div class="cards expanded">
                 `;
 
-            for(let poll of this.#polls.filter(p => p.status == true)) {
-                html += this.#getCardHtml(poll);
+            // HR-фахівець бачить опитування всіх
+            if(this.#User.isHR) {
+
+                // Опитування керівника
+                let mentorPolls = polls.filter(p => p.recipient_type_id == 2 && p.status == true);
+                
+                if(mentorPolls.length > 0) {
+                    html += `<h5>Керівника</h5>`;
+                    for(let poll of mentorPolls) {
+                        html += this.#getCardHtml(poll);
+                    }
+                }
+
+                // Опитування новачка
+                let newbeePolls = polls.filter(p => p.recipient_type_id == 1 && p.status == true);
+
+                if(newbeePolls.length > 0) {
+                    html += `<h5>Новачка</h5>`;
+                    for(let poll of newbeePolls) {
+                        html += this.#getCardHtml(poll);
+                    }
+                }
+            }
+            else
+            {
+                for(let poll of polls) {
+                    html += this.#getCardHtml(poll);
+                }
             }
         }
 
@@ -389,7 +470,7 @@ class PollsController {
                     </div>
                     <div class="col">
                         <svg><use href="#date-hint"/></svg>
-                        <span style='${expired ? 'color:red;' : ''}'>
+                        <span style='${expired && !poll.status ? 'font-weight:bold' : ''}'>
                         ${poll.date_to.split(' ')[0]}
                         </span>
                     </div>

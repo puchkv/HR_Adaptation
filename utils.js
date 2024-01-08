@@ -1,7 +1,26 @@
+import ERRORS from "./errors.js";
 
 class Utils {
 
+    get testInitData() {
+        return "query_id=AAHUWZZ3AAAAANRZlnfYKkqY&user=%7B%22id%22%3A2006342100%2C%22first_name%22%3A%22%D0%AE%D1%80%D1%96%D0%B9%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22lyubchak%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1697117294&hash=dc39d00ad19160a006b7737be6ee9c6def17a723302b9985ad5aa088c8b6fef2";
+    }
+
+    set UserRole(value) {
+        this._value = value;
+    }
+
+    get UserRole() {
+        return this._value;
+    }
+
+    #latestMainCallback = null;
+    #latestBackCallback = null;
+
     loadScreen = (screenName) => {
+
+        document.querySelector('div.success-screen')?.remove();
+        
         let screen = document.getElementById(screenName);
     
         if(typeof screen !== 'undefined' && screen !== null) {
@@ -90,20 +109,90 @@ class Utils {
         return newBtn;
     }
 
-    showMainButton = (caption) => {
+    showMainButton = function(caption, callBack) {
 
-        var btn = this.#MainButton;
-        btn.hidden = false;
-        btn.textContent = caption;
+        var btn = this.isTelegramClient ? window.Telegram.WebApp.MainButton : this.#MainButton;
 
-        return btn;
+        if(this.#latestMainCallback !== callBack) {
+            window.Telegram.WebApp.MainButton.offClick(this.#latestMainCallback);
+            this.#latestMainCallback = callBack;
+        }
+
+        if(this.isTelegramClient) 
+        {
+            btn.setText(caption);
+            btn.onClick(this.#latestMainCallback);
+
+            if(!btn.isVisible)
+                btn.show();
+        }        
+        else 
+        {            
+            btn.hidden = false;
+            btn.textContent = caption; 
+
+            setTimeout(function() {
+                btn.onclick = this.#latestMainCallback;
+            }, 320);
+        }
     }
+
+    
+    showBackButton = function(callBack) {
+
+        let btn = window.Telegram.WebApp.BackButton;
+
+        if(this.#latestBackCallback !== callBack) {
+            btn.offClick(this.#latestBackCallback);
+            this.#latestBackCallback = callBack;
+        }
+
+        btn.onClick(this.#latestBackCallback);
+
+        if(!btn.isVisible) {
+            btn.show();
+        }
+    }
+
+    hideBackButton = function () {
+        return window.Telegram.WebApp.BackButton.hide();
+    }
+
+
+    MainBtn = (caption) => {
+        return window.Telegram.WebApp.MainButton.setText(caption);
+    }
+
 
     hideMainButton = () => {
-        document.getElementById("mainButton").onclick = null;
-        document.getElementById("mainButton").textContent = '';
-        document.getElementById("mainButton").hidden = true;
+
+        if(this.isTelegramClient) 
+        {
+            let btn = window.Telegram.WebApp.MainButton;
+            btn.offClick(() => {});
+            btn.hide();
+        } 
+        else 
+        {
+            let btn = document.getElementById("mainButton");
+
+            btn.onclick = null;
+            btn.textContent = '';
+            btn.hidden = true;
+        }
     }
+
+    throwError = (errorCode) => {
+
+        if(errorCode == '' || ERRORS[errorCode] == null || typeof ERRORS[errorCode] === 'undefined')
+            return console.error(`Utils.throwError: errorCode is not specified`);
+
+        const error = new Error(ERRORS[errorCode]);
+        error.code = errorCode;
+
+        throw error;
+    }
+
 
     checkInputs = () => {
         let textInputs = document.querySelectorAll(`textarea, input[type="text"]`);
@@ -129,6 +218,31 @@ class Utils {
                 }
             }
         });
+
+        // document.querySelectorAll("input[type='radio']").forEach(radio => {
+        //     radio.onclick = () => {
+        //         //e.preventDefault();
+        //         document.querySelectorAll(`input[name='${radio.name}']`).forEach(r => {
+
+        //             if(r == radio)
+        //                 return;
+
+        //             if(r.checked)
+        //                 r.checked = false;
+        //         });
+
+        //         if(radio.checked) 
+        //         {
+        //             radio.checked = false;
+        //         }
+        //         else 
+        //         {
+        //             radio.checked = true;
+        //         }
+        //     }
+        // });
+
+
     }
 
     initTextarea() {
@@ -147,6 +261,12 @@ class Utils {
                 this.style.height = 0;
                 this.style.height = (this.scrollHeight) + "px";
             }, false);
+        }
+
+        for(let i of tx) {
+            i.onblur = () => {
+                document.activeElement.blur();
+            }
         }
     }
 
@@ -224,6 +344,69 @@ class Utils {
     }
 
 
+    showAnimation = (type, text, hideAfterPlay = true) => {
+
+        let el = document.createElement("div");
+        el.classList.add('success-screen');
+
+        let emoji = null;
+
+        switch(type) {
+            case "thumb": emoji = './icons/thumb.webm'; break;
+            case "party": emoji = './icons/party.webm'; break;
+            default: emoji = './icons/thumb.webm'; break;
+        }
+        
+        let gif = document.createElement("video");
+        gif.setAttribute("autoplay", true);
+        gif.src = emoji; 
+        el.appendChild(gif);
+        
+        let textEl = document.createElement("span");
+        textEl.innerText = text;
+        el.appendChild(textEl);
+
+        document.body.appendChild(el);
+
+        el.animate([
+            { opacity: 0 },
+            { opacity: 1 }
+        ], {
+            duration: 400,
+            iterations: 1
+        });
+        
+        if(hideAfterPlay) {
+
+            setTimeout(function() {
+                el.animate([
+                    { opacity: 1 },
+                    { opacity: 0 }
+                ], {
+                    duration: 400,
+                    iterations: 1
+                });
+
+                setTimeout(function() {
+                    el.removeChild(gif);
+                    el.removeChild(textEl);
+                    gif.remove();
+                    textEl.remove();
+                    document.body.removeChild(el);
+                    el.remove();
+                }, 400);
+            }, 2000);
+        }
+    }
+
+
+    get isTelegramClient() {
+        return window?.Telegram?.WebApp?.initData !== '';
+    }
+
+    Average = (numbers) => {
+        return (numbers.reduce((acc, number) => acc + number, 0) / numbers.length).toFixed(1);
+    }
 }
 
 const utils = new Utils();

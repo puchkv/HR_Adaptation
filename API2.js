@@ -1,4 +1,5 @@
 import Routes from './routes.js'
+import Utils from './utils.js';
 
 class API {
 
@@ -18,19 +19,18 @@ class API {
         return (typeof token !== 'undefined' && token !== null);
     }
         
-    
     async send(routeName, requestBody) {
 
         let route = Routes.get(routeName);
 
         if(typeof route === 'undefined' || route === null) {
-            return console.error(`API: Route path ${routeCode} was not found! Request hasn't been sent!`);
+            Utils.throwError("ROUTE_NOT_FOUND");
         }
 
         let token = await this.#getToken();
 
-        if(token === null)
-            return console.error("Tokens not found! Execution has been terminated!");
+        if(typeof token !== 'string')
+            Utils.throwError("TOKEN_NOT_FOUND");
 
         let request = new Request(route.url.href, {
             method: route.method,
@@ -47,51 +47,79 @@ class API {
     }
 
     async #awaitResponse(request, options) {
-        return await fetch(request, options)
+        return fetch(request, options)
             .then(response => {
                 if(response.ok) {
                     return response.json();
                 } 
-                else {
-                    throw new Error(`Request to ${request.url} return failed status! Check details...`);
-                }
+                
+                Utils.throwError("RESPONSE_FAILED")
             })
             .then(json => {
                 return json;
             })
             .catch(e => {
-                console.error(`API.FETCH: ${e}`)
+                return e;
             });
     }
 
     
     async #getToken() {
 
-        if(sessionStorage.getItem("accessToken") === null)  {
-            await this.#updateTokens();
+        if(!this.tokenExists())  {
+            return this.#updateTokens()
+                .then(success => {
+                    if(success)
+                        return sessionStorage.getItem("accessToken");
+                     
+                    Utils.throwError("UNAUTHORIZED");  
+                })
+                .catch(error => {
+                    return error;
+                });
         }
         else 
         {
             if(new Date() > this.#getTokenExpiredTime()) {
-                await this.#updateTokens();
+                return this.#updateTokens()
+                    .then(success => {
+                        if(success)
+                            return sessionStorage.getItem("accessToken");
+                          
+                        Utils.throwError("UNAUTHORIZED");  
+                    })
+                    .catch(error => {
+                        return error;
+                    });
+            } else {
+                return sessionStorage.getItem("accessToken");
             }
         }
-        
-        return sessionStorage.getItem("accessToken");
     }
 
     async #updateTokens() {
     
-        let tokens = await this.#getAccessTokens()
-            .then(response => response);
-        
-        if(tokens.length !== 0) {
-            sessionStorage.clear();
+        return this.#getAccessTokens()
+            .then(tokens => {
 
-            sessionStorage.setItem("accessToken", tokens.accessToken);
-            sessionStorage.setItem("refreshToken", tokens.refreshToken);
-            sessionStorage.setItem("expired", this.#getNewExpiredTime());
-        }
+                if(typeof tokens === 'object' && tokens.accessToken != null) {
+                    sessionStorage.removeItem("accessToken");
+                    sessionStorage.removeItem("accessToken");
+                    sessionStorage.removeItem("accessToken");
+    
+                    sessionStorage.setItem("accessToken", tokens.accessToken);
+                    sessionStorage.setItem("refreshToken", tokens.refreshToken);
+                    sessionStorage.setItem("expired", this.#getNewExpiredTime());
+
+                    return true;
+                }
+                else {
+                    Utils.throwError("TOKEN_NOT_FOUND");
+                }
+            })
+            .catch(error => {
+                return error;
+            });
     }
 
     async #getAccessTokens() {
@@ -100,12 +128,12 @@ class API {
         let route = Routes.get(routeName);
 
         if(route === null || typeof route === 'undefined')
-            return console.error(`Route ${routeName} not found!`)
+            Utils.throwError("ROUTE_NOT_FOUND");
 
-        // check this for an actual data !!!!
-        let initData = window.Telegram?.WebApp?.initData;
+        let initData = window.Telegram.WebApp.initData; // production using
+        //let initData = ''; // for local testing in Telegram
 
-        if(typeof initData === 'undefined' || initData === null)
+        if(typeof initData === 'undefined' || initData === null || initData === '')
             initData = this.#initData;
 
         route.url.searchParams.append("initData", initData);
@@ -115,14 +143,17 @@ class API {
             .then(json => {
                 
                 if(json.success !== true)
-                    return console.error("Can't get access token! Success = false")
-
+                    Utils.throwError("UNAUTHORIZED");
+                        
                 if(json.hasOwnProperty("data") 
                     && Object.keys(json.data).length > 0) {
 
                     return json.data;
                 }
 
+            })
+            .catch(error => {
+                return error;
             });
         
         return await result;

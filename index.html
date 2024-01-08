@@ -136,15 +136,20 @@
     <section id="teamMembers"  style="display:none">
     </section>
 
-    <section id="no-connection" class="empty-page" style="display:none">
-       <img src="./images/no-connection.png"/>
-       <span>
-        Відсутнє з'єднання<br>
-        або не вистачає прав доступу
-       </span>
-    </section>
 
     <button id="mainButton" hidden></button>
+
+    <section id="successAnim" style="display:none">
+        <picture class="anim-sticker">
+            <object type="image/gif" data="icons/success.gif"></object>
+        </picture>
+    </section>
+
+
+    <!-- <div id="popup-message" class="success">
+        <i></i>
+        <span>Дані оновлено успішно!</span>
+    </div> -->
 
     <nav style="display:none">
         <div data-route='tasks' class="checked">
@@ -161,7 +166,9 @@
         </div>
     </nav>
 
-    <script type="module" src="app.js"></script>
 
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>

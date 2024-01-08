@@ -1,10 +1,13 @@
 import Utils from "./utils.js";
 import API from "./API2.js";
+import User from "./user.js";
 
 class TasksController {
 
+
     #section = "tasks";
     #tasks = [];
+    #User = {};
 
     #statuses = {
         IN_PROGRESS: 1,
@@ -12,7 +15,7 @@ class TasksController {
         RATED: 3
     }
 
-    initialize(tasks) {
+    initialize(tasks, user) {
 
         if(tasks === null || typeof tasks === 'undefined' || 
             !Array.isArray(tasks) || tasks.length <= 0) 
@@ -21,10 +24,15 @@ class TasksController {
             return this.showEmpty();
         }
 
+        this.#User = user;
         this.#tasks = tasks.sort((t1, t2) => this.sort(t1, t2));
 
+        
         let generalTasks = tasks.filter((t) => t.category.includes("Загальна програма"));
         let individualTasks = tasks.filter((t) => t.category.includes("Індивідуальна програма"));
+
+        let generalTypes = generalTasks.map(t => t.type).filter((value, index, self) => self.indexOf(value) === index);
+        let individualTypes = individualTasks.map(t => t.type).filter((value, index, self) => self.indexOf(value) === index);
 
         let container = document.getElementById(this.#section);
 
@@ -43,8 +51,12 @@ class TasksController {
 
                     <div class="cards" data-type="general">`;
 
-            for(let task of generalTasks) {
-                html += this.#getCardHTML(task);
+            for(let type of generalTypes) {
+                html += `<h5>${type}</h5>`;
+
+                for(let task of generalTasks.filter(t => t.type == type)) {
+                    html += this.#getCardHTML(task);
+                }
             }
 
             html += `</div>`;
@@ -63,8 +75,12 @@ class TasksController {
 
                 <div class="cards" data-type="individual">`;
             
-            for(let task of individualTasks) {
-                html += this.#getCardHTML(task);
+            for(let type of individualTypes) {
+                html += `<h5>${type}</h5>`;
+
+                for(let task of individualTasks.filter(t => t.type == type)) {
+                    html += this.#getCardHTML(task);
+                }
             }
 
             html += `</div>`;
@@ -102,7 +118,7 @@ class TasksController {
                     <span style="font-weight: bold;">Ініціатор</span>
                     <div style="display:flex;gap: 5px;">
                         <p>${task.author.fam} ${task.author.nam} ${task.author.otch}</p>
-                        <svg><use href="#telegram" /></svg>
+                        <svg><use href="#telegram"/></svg>
                     </div>
                 </div>
             </div>
@@ -118,72 +134,235 @@ class TasksController {
             </div>`;
 
         document.getElementById("taskView").innerHTML = taskHtml;
+
+        console.log(`User INN: ${this.#User.Inn}, Author INN: ${task.author.inn}`);
+        console.log(this.#User.Inn == task.author.inn);
+
+        if(this.#User.Inn == task.author.inn && task.status_id == this.#statuses.DONE) {
+
+            taskHtml += `
+                <div class="sp-line"></div>
+                <div class="card">
+                    <h3>Оцініть виконання задачі</h3>
+                    <div class="rating my-12">
+                        <svg><use href="#star" /></svg>
+                        <svg><use href="#star" /></svg>
+                        <svg><use href="#star" /></svg>
+                        <svg><use href="#star" /></svg>
+                        <svg><use href="#star" /></svg>
+                    </div>
+
+                    <textarea id="task-comment" placeholder="Коментар"></textarea>
+                </div>
+            `;
+
+            document.getElementById("taskView").innerHTML = taskHtml;
+
+            document.querySelectorAll(".rating>svg")?.forEach(rateBtn => {
+                rateBtn.onclick = () => {
+                    let rate = 0;
+                    let temp = rateBtn;
+    
+                    while(temp != null) {
+                        rate++;
+                        temp.querySelector("use")?.setAttribute("href", "#star-filled");
+                        temp.classList.add("checked");
+                        temp = temp.previousElementSibling;
+                    }
+    
+                    let nextEl = rateBtn;
+                    while(nextEl != null) {
+                        nextEl = nextEl.nextElementSibling;
+                        nextEl?.classList?.remove("checked");
+                        nextEl?.querySelector("use")?.setAttribute("href", "#star");
+                    }
+                    
+                    let commEl = document.querySelector(".card[data-type='task-comment']");
+                    commEl?.removeAttribute("display");
+    
+                    Utils.showMainButton("Оцінити", () => this.rate(task.id, rate));
+                    Utils.showBackButton(() => Utils.loadScreen('tasks'));
+                    return;
+                }
+            });
+        }
+
+        if(task.status_id == this.#statuses.RATED) {
+
+            // Solid stars variant
+            // taskHtml += `
+            //     <div class="card">
+            //         <div class="rating my-12 w-80">
+            //     `;
+            
+            // for(let i = 1; i <= 5; i++) {
+            //     taskHtml += i <= task.rate 
+            //         ? `<svg><use href="#star-solid" /></svg>` 
+            //         : `<svg><use href="#star" /></svg>`;  
+            // }   
+            
+            // taskHtml += `</div></div>`;
+
+            taskHtml += `
+            <div class="card icon flex-row">
+                <div class="icon-hint">
+                    <svg><use href="#chat"/></svg>
+                </div>
+                <div>
+                    <span style="font-weight: bold;">Коментар до оцінки</span>
+                    <p>${task.rate_comm}</p>
+                </div>
+            </div>
+        `;
+
+            taskHtml += `
+                <div class="card">
+                    <div class="rating my-12 w-80">
+                `;
+            
+            for(let i = 1; i <= 5; i++) {
+                taskHtml += i <= task.rate 
+                    ? `<svg><use href="#star-filled" /></svg>` 
+                    : `<svg><use href="#star" /></svg>`;  
+            }   
+            
+            taskHtml += `
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("taskView").innerHTML = taskHtml;
+        }
+        
         Utils.loadScreen("taskView");
 
-        Utils.hideNav();
-
-        if(task.status_id !== 1) 
-        {
-            Utils.showMainButton("Назад").onclick = () => {
+        if(!this.#User.isNewbee || (task.status_id != 1 || task.status_id != 3)) 
+        {   
+            Utils.showMainButton("Назад", function() {
                 Utils.loadScreen('tasks');
                 Utils.hideMainButton();
                 Utils.showNav();
-            }
+            });
         }
         else 
         {
-            Utils.showMainButton("Виконано").onclick = () => {
-
-                console.log(JSON.stringify({id: task.id}));
-    
-                API.send("POST_COMPLETE_TASK", JSON.stringify({
-                    id: task.id
-                })).then(response => {
+            Utils.showBackButton(() => Utils.loadScreen('tasks'));
+            Utils.showMainButton("Виконано", function () {
+                API.send("POST_COMPLETE_TASK", JSON.stringify({ id: task.id})
+                ).then(response => {
     
                     if(response !== null && typeof response !== 'undefined'
                         && response.success) 
                     {
-                        window.location.reload();
+                        Utils.showAnimation("party", "Задачу виконано!", false);
+                        Utils.showMainButton("На головну", () => window.location.reload());
+                        Utils.hideBackButton();
                     }
     
                 }).catch(error => {
                     return console.error(error);
                 });
-            };
+            });
         }   
     }
 
+    rate(id, rate) {
+        
+        let comm = document.getElementById("task-comment")?.value;
+
+        if(comm == null || comm === '' || typeof comm === 'undefined') {
+            return window.Telegram.WebApp.showAlert("Не вказано коментар!");
+        }
+
+        API.send("POST_RATE_TASK", JSON.stringify({
+            id: id,
+            rate: rate,
+            comment: comm
+        })).then(response => {
+            
+            if(response.success) {
+                Utils.showAnimation("thumb", "Задачу оцінено!", false);
+                Utils.showMainButton("Назад", () => window.location.reload());
+                Utils.showBackButton(() => window.location.reload());
+            }
+
+        }).catch(error => {
+            console.error(`[RateTask]: ${error}`);
+        });
+
+    }
     
     #getCardHTML(task) {
-        return `
+        let html = `
         <div class="card" data-task=${task.id} 
             data-done=${task.status_id != this.#statuses.IN_PROGRESS}>
             <div class="card-body">
                 <div class="radiocheck 
                 ${task.status_id != this.#statuses.IN_PROGRESS ? 'checked' : ''}">
-                    <svg><use href="#checkmark"/></svg>
+                ${task.status_id != this.#statuses.IN_PROGRESS ? `<svg><use href="#checkmark-hint"/></svg>` : `<svg><use href="#checkmark"/></svg>`}
                 </div>
                 <span>${task.subject}</span>
-            </div>
-            <div class="card-footer">
-                <div class="col">
-                    <div class="profile-icon-small">
-                        ${task.author.photo_url !== '' ?
-                        `<img src='${task.author.photo_url}'/>` : 
-                        '<svg><use href="#profile-hint"/></svg>'}
+        `;
+
+        if(task.status_id == this.#statuses.RATED) {
+            html += `
+                <div class="task-rate">
+                    <span>${task.rate}</span>
+                    <svg><use href="#star-filled"/></svg>
+                </div>
+            `;    
+        }   
+
+        html += `</div>`;
+
+        if(this.#User.Inn == task.author.inn && task.status_id == this.#statuses.DONE) {
+            html += `
+                <div class="card-footer">
+                    <div class="col">
+                        <svg><use href="#star"/></svg>
+                        <span>Потребує оцінки</span>
                     </div>
-                    <span>
-                        ${task.author.fam} 
-                        ${task.author.nam.charAt(0)}.
-                        ${task.author.otch.charAt(0)}.
-                    </span>
                 </div>
-                <div class="col">
-                    <svg><use href="#date-hint"/></svg>
-                    <span>${task.date_to}</span>
+            `;
+        } 
+        else
+        {
+            html += `
+                <div class="card-footer">
+                    
+                    <div class="col">
+                        <div class="profile-icon-small">
+                            ${task.author.photo_url !== '' ?
+                            `<img src='${task.author.photo_url}'/>` : 
+                            '<svg><use href="#profile-hint"/></svg>'}
+                        </div>
+                        <span>
+                            ${task.author.fam} 
+                            ${task.author.nam.charAt(0)}.
+                            ${task.author.otch.charAt(0)}.
+                        </span>
+                    </div>
+                    <div class="col">
+                        <svg><use href="#date-hint"/></svg>
+                        <span>${task.date_to}</span>
+                    </div>
                 </div>
-            </div>
-        </div>`;
+            `;
+            
+            if(task.status_id == this.#statuses.RATED && task.rate_comm != '') {
+                html += `
+                    <div class="sp-line"></div>
+                    <div class="card-comment">
+                        <svg><use href="#chat"/></svg>
+                        <span>${task.rate_comm}</span>
+                    </div>
+                `;
+            }
+        }
+
+        html += `</div>`;
+
+        return html;
     }
 
     showEmpty() {

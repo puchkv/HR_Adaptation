@@ -694,6 +694,7 @@ input[type="text"]:focus, textarea:focus {
     min-height: 20px;
     outline: 2px solid var(--link-color);
     border-radius: 50%;
+    background: transparent !important;
     appearance: none;
 }
 
@@ -712,6 +713,10 @@ input[type="text"]:focus, textarea:focus {
 .custom-radio > input[type="radio"]:checked ~ div {
     background: var(--link-color);
     transform: scale(1);
+}
+
+.custom-radio > input[type="radio"]:disabled {
+    background: transparent !important;
 }
 
 

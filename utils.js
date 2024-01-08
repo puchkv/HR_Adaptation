@@ -260,7 +260,8 @@ class Utils {
                 this.value = this.value.trim();
                 this.style.height = 0;
                 this.style.height = (this.scrollHeight) + "px";
-            }, false);
+                this.blur();
+            });
         }
 
         for(let i of tx) {

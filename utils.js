@@ -263,19 +263,15 @@ class Utils {
                 this.blur();
             });
 
-            tx[i].addEventListener("blur focusout", function() {
+            tx[i].addEventListener("focusout", function() {
+                window.Telegram?.WebApp?.showAlert("Keyboard must hide by FOCUSOUT...");
+                alert("keyboard hide focusout...");
                 document.activeElement.blur();
             });
 
             tx[i].addEventListener("touchleave", function() {
                 document.activeElement.blur();
                 document.elementFromPoint(i.x, i.y);
-            });
-
-            tx[i].addEventListener("mouseleave", function(e) {
-                window.Telegram?.WebApp?.showAlert("Keyboard must hide...");
-                alert("keyboard hide...");
-                e.target.blur();
             });
 
         }

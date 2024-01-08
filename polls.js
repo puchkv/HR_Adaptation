@@ -109,7 +109,6 @@ class PollsController {
         let textInputs = document.getElementById('activePoll').getElementsByTagName("textarea");
 
         let emptyQuestionId = this.isAnyEmptyAnswer();
-        console.log(emptyQuestionId);
 
         if(emptyQuestionId !== '') {
             let elem = document.getElementById(emptyQuestionId);
@@ -127,6 +126,8 @@ class PollsController {
 
             return false;
         }
+
+        document.activeElement?.blur();
 
         var data = { "answers": new Array() };
 

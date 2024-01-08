@@ -141,15 +141,12 @@ window.onload = async () => {
         }, 500);
     });
 
-
-    document.addEventListener("touchcancel", function(){
-        document.activeElement.blur();
-    });
-
-    document.addEventListener("focusout", function() {
-        document.activeElement.blur();
-    });
-
+    // IOS - Safari keyboard hide on touch fix
+    document.addEventListener("touchend", function(e) {
+        if(e?.target?.type !== 'textarea') {
+            e?.target?.blur();
+        }
+    })
 }
 
 const loading = () => {

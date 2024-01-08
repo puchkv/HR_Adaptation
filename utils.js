@@ -361,7 +361,7 @@ class Utils {
 
         switch(type) {
             case "thumb": emoji = './icons/thumb.mp4'; break;
-            case "party": emoji = './icons/party.mp4'; break;
+            case "party": emoji = './icons/party.webp'; break;
             default: emoji = './icons/thumb.mp4'; break;
         }
         

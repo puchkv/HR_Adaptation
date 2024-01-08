@@ -264,9 +264,9 @@ class Utils {
         }
 
         for(let i of tx) {
-            i.onblur = () => {
+            i.addEventListener("blur focusout", function() {
                 document.activeElement.blur();
-            }
+            });
 
             i.addEventListener("touchleave touchcancel", function(e) {
                 e.preventDefault();

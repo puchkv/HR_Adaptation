@@ -144,7 +144,7 @@ window.onload = async () => {
     // IOS - Safari keyboard hide on touch fix
     document.addEventListener("touchend", function(e) {
         if(e?.target?.type !== 'textarea') {
-            e?.target?.blur();
+            document.activeElement.blur();
         }
     })
 }

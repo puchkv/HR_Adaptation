@@ -255,6 +255,7 @@ class Utils {
                 this.style.height = 0;
                 this.style.height = (this.scrollHeight) + "px";
             });
+
             tx[i].addEventListener("change", function() {
                 this.value = this.value.replace(/^\s*$(?:\r\n?|\n)/gm, "");
                 this.value = this.value.trim();
@@ -263,18 +264,17 @@ class Utils {
                 this.blur();
             });
 
-            tx[i].addEventListener("focusout", function(e) {
-                e.preventDefault();
-                document.activeElement.blur();
-                document.elementFromPoint(i.x, i.y);
-            });
+            // tx[i].addEventListener("focusout", function(e) {
+            //     e.preventDefault();
+            //     document.activeElement.blur();
+            //     document.elementFromPoint(i.x, i.y);
+            // });
 
-            tx[i].addEventListener("touchend", function(e) {
-                e.preventDefault();
-                document.activeElement.blur();
-                document.elementFromPoint(i.x, i.y);
-            });
-
+            // tx[i].addEventListener("touchend", function(e) {
+            //     e.preventDefault();
+            //     document.activeElement.blur();
+            //     document.elementFromPoint(i.x, i.y);
+            // });
         }
     }
 

@@ -360,13 +360,13 @@ class Utils {
         let emoji = null;
 
         switch(type) {
-            case "thumb": emoji = './icons/thumb.mp4'; break;
+            case "thumb": emoji = './icons/thumb.webp'; break;
             case "party": emoji = './icons/party.webp'; break;
-            default: emoji = './icons/thumb.mp4'; break;
+            default: emoji = './icons/thumb.webp'; break;
         }
         
-        let gif = document.createElement("video");
-        gif.setAttribute("autoplay", true);
+        let gif = document.createElement("img");
+        //gif.setAttribute("autoplay", true);
         gif.src = emoji; 
         el.appendChild(gif);
         

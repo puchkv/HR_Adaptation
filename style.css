@@ -2,8 +2,8 @@
 
 
 :root {
-    --background-color: var(--tg-theme-secondary-bg-color);
-    --surface-color: var(--tg-theme-bg-color);
+    --background-color: var(--tg-theme-secondary-bg-color, #f3f3f3);
+    --surface-color: var(--tg-theme-bg-color, #fff);
     --primary-color: 32, 213, 213;
 
     --grey: grey;
@@ -13,12 +13,12 @@
     --grey-70: color-mix(in srgb, var(--grey) 60%, transparent);
     --grey-90: color-mix(in srgb, var(--grey) 90%, transparent);
 
-    --link-color: var(--tg-theme-link-color);
+    --link-color: var(--tg-theme-link-color, #ff9900);
     --link-color-hinted: color-mix(in srgb, var(--link-color) 30%, transparent);
     
     --title-color: #999;
-    --text-color: var(--tg-theme-text-color);
-    --hint-color: var(--tg-theme-hint-color);
+    --text-color: var(--tg-theme-text-color, #000);
+    --hint-color: var(--tg-theme-hint-color, #7f7f7f);
     --separator-color: color-mix(in srgb, var(--hint-color) 30%, transparent);
 
     --empty-color: #B7B7B7;
@@ -859,8 +859,9 @@ input[type="radio"]:disabled~label {
     background: var(--background-color);
 }
 
-.success-screen > video {
+.success-screen > img {
     max-width: 60%;
+
 }
 
 .success-screen > span {
@@ -1040,9 +1041,8 @@ label.checkbox > input[type="checkbox"]:checked ~ svg {
     height: 100%;
 }
 
-.empty-page > video {
+.empty-page > img {
     width: 65%;
-    max-width: 200px;
 }
 
 .empty-page > span {

@@ -360,9 +360,9 @@ class Utils {
         let emoji = null;
 
         switch(type) {
-            case "thumb": emoji = './icons/thumb.webm'; break;
-            case "party": emoji = './icons/party.webm'; break;
-            default: emoji = './icons/thumb.webm'; break;
+            case "thumb": emoji = './icons/thumb.mp4'; break;
+            case "party": emoji = './icons/party.mp4'; break;
+            default: emoji = './icons/thumb.mp4'; break;
         }
         
         let gif = document.createElement("video");

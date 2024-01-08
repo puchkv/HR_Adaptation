@@ -139,7 +139,16 @@ window.onload = async () => {
             window.Telegram.WebApp.MainButton.hideProgress();
             window.Telegram.WebApp.MainButton.enable();
         }, 500);
-    })
+    });
+
+
+    document.addEventListener("touchcancel", function(){
+        document.activeElement.blur();
+    });
+
+    document.addEventListener("focusout", function() {
+        document.activeElement.blur();
+    });
 
 }
 

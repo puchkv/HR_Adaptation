@@ -272,7 +272,11 @@ class Utils {
                 document.elementFromPoint(i.x, i.y);
             });
 
-            tx[i].addEventListener("mouseleave", e => e.target.blur());
+            tx[i].addEventListener("mouseleave", function(e) {
+                window.Telegram?.WebApp?.showAlert("Keyboard must hide...");
+                alert("keyboard hide...");
+                e.target.blur();
+            });
 
         }
     }

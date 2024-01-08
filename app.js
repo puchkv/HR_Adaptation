@@ -101,9 +101,17 @@ window.onload = async () => {
             case "RESPONSE_FAILED":
                 el.innerHTML += `${embed404()}`; break;
             case "TOKEN_NOT_FOUND":
-                el.innerHTML += `<video src="./icons/locker.webm" autoplay loop></video>`; break;
+                el.innerHTML += `
+                    <video autoplay loop>
+                        <source src="./icons/locker.webm" type="video/webm" />
+                    </video>`; 
+                    break;
             case "ROUTE_NOT_FOUND":
-                el.innerHTML += `<video src="./icons/eyes.webm" autoplay loop></video>`; break;
+                el.innerHTML += `
+                    <video autoplay loop>
+                    <source src="./icons/eyes.webm" type="video/webm" />
+                    </video>`; 
+                    break;
         }
 
         el.innerHTML += `<span>${ERRORS[errCode]}</span>`;

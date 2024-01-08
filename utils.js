@@ -254,7 +254,7 @@ class Utils {
             tx[i].addEventListener("input", function() {
                 this.style.height = 0;
                 this.style.height = (this.scrollHeight) + "px";
-            }, false);
+            });
             tx[i].addEventListener("change", function() {
                 this.value = this.value.replace(/^\s*$(?:\r\n?|\n)/gm, "");
                 this.value = this.value.trim();
@@ -262,18 +262,17 @@ class Utils {
                 this.style.height = (this.scrollHeight) + "px";
                 this.blur();
             });
-        }
 
-        for(let i of tx) {
-            i.addEventListener("blur focusout", function() {
+            tx[i].addEventListener("blur focusout", function() {
                 document.activeElement.blur();
             });
 
-            i.addEventListener("touchleave touchcancel", function(e) {
-                e.preventDefault();
+            tx[i].addEventListener("touchleave", function() {
                 document.activeElement.blur();
                 document.elementFromPoint(i.x, i.y);
             });
+
+            tx[i].addEventListener("mouseleave", e => e.target.blur());
 
         }
     }

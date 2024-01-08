@@ -132,7 +132,7 @@ class Utils {
             btn.textContent = caption; 
 
             setTimeout(function() {
-                btn.onclick = this.#latestMainCallback;
+                btn.onclick = callBack;
             }, 320);
         }
     }
@@ -267,6 +267,13 @@ class Utils {
             i.onblur = () => {
                 document.activeElement.blur();
             }
+
+            i.addEventListener("touchleave touchcancel", function(e) {
+                e.preventDefault();
+                document.activeElement.blur();
+                document.elementFromPoint(i.x, i.y);
+            });
+
         }
     }
 

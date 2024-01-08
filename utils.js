@@ -251,7 +251,7 @@ class Utils {
 
         for (let i = 0; i < tx.length; i++) {
             tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-            tx[i].addEventListener("input", function() {
+            tx[i].addEventListener("keydown", function() {
                 this.style.height = 0;
                 this.style.height = (this.scrollHeight) + "px";
             });
@@ -264,8 +264,6 @@ class Utils {
             });
 
             tx[i].addEventListener("focusout", function() {
-                window.Telegram?.WebApp?.showAlert("Keyboard must hide by FOCUSOUT...");
-                alert("keyboard hide focusout...");
                 document.activeElement.blur();
             });
 

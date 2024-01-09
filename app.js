@@ -142,6 +142,8 @@ window.onload = async () => {
     
 
     window.Telegram.WebApp.MainButton.onClick(function() {
+
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
         window.Telegram.WebApp.MainButton.showProgress();
         window.Telegram.WebApp.MainButton.disable();
 

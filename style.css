@@ -13,7 +13,7 @@
     --grey-70: color-mix(in srgb, var(--grey) 60%, transparent);
     --grey-90: color-mix(in srgb, var(--grey) 90%, transparent);
 
-    --link-color: var(--tg-theme-link-color, #ff9900);
+    --link-color: var(--tg-theme-link-color, #50add8);
     --link-color-hinted: color-mix(in srgb, var(--link-color) 30%, transparent);
     
     --title-color: #999;

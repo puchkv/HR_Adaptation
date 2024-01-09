@@ -146,7 +146,8 @@ window.onload = async () => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
         window.Telegram.WebApp.MainButton.showProgress();
         window.Telegram.WebApp.MainButton.disable();
-
+        document.activeElement?.blur();
+        
         setTimeout(function() {
             window.Telegram.WebApp.MainButton.hideProgress();
             window.Telegram.WebApp.MainButton.enable();

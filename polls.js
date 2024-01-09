@@ -105,8 +105,6 @@ class PollsController {
 
     post() {
 
-        document.activeElement?.blur();
-
         let inputs = document.getElementById('activePoll').getElementsByTagName("input");
         let textInputs = document.getElementById('activePoll').getElementsByTagName("textarea");
 

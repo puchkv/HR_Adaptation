@@ -781,7 +781,7 @@ input[type="text"]:focus, textarea:focus {
 .rating {
     display: inline-flex;
     width: 100%;
-    justify-content: space-between;
+    justify-content: space-around;
     margin: 0 auto;
 }
 

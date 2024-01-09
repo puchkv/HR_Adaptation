@@ -130,6 +130,7 @@ class Utils {
         {            
             btn.hidden = false;
             btn.textContent = caption; 
+            btn.onclick = null;
 
             setTimeout(function() {
                 btn.onclick = callBack;
@@ -360,14 +361,18 @@ class Utils {
         let emoji = null;
 
         switch(type) {
-            case "thumb": emoji = './icons/thumb.webp'; break;
-            case "party": emoji = './icons/party.webp'; break;
-            default: emoji = './icons/thumb.webp'; break;
+            case "thumb": emoji = './icons/thumb.apng'; break;
+            case "party": emoji = './icons/party.apng'; break;
+            default: emoji = './icons/thumb.apng'; break;
         }
         
-        let gif = document.createElement("img");
-        //gif.setAttribute("autoplay", true);
-        gif.src = emoji; 
+        let gif = document.createElement("picture");
+
+        gif.innerHTML = `
+            <source srcset='${emoji}' type="image/apng">
+            <img src='${emoji}' />
+        `;
+
         el.appendChild(gif);
         
         let textEl = document.createElement("span");

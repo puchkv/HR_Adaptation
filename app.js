@@ -105,19 +105,29 @@ window.onload = async () => {
 
         switch(errCode) {
             case "RESPONSE_FAILED":
-                el.innerHTML += `<img src='./icons/empty.webp' />`; break;
+                el.innerHTML += `
+                    <picture>
+                        <source srcset="./icons/empty.apng" type="image/apng">
+                        <img src='./icons/empty.apng' />
+                    </picture>
+                `; 
+                break;
             case "TOKEN_NOT_FOUND":
                 el.innerHTML += `
-                    <video autoplay loop>
-                        <source src="./icons/locker.mp4" type="video/mp4" />
-                    </video>`; 
-                    break;
+                    <picture>
+                        <source srcset="./icons/locker.apng" type="image/apng">
+                        <img src='./icons/locker.apng' />
+                    </picture>
+                `; 
+                break;
             case "ROUTE_NOT_FOUND":
                 el.innerHTML += `
-                    <video autoplay loop>
-                    <source src="./icons/eyes.mp4" type="video/mp4" />
-                    </video>`; 
-                    break;
+                    <picture>
+                        <source srcset="./icons/empty.apng" type="image/apng">
+                        <img src='./icons/empty.apng' />
+                    </picture>
+                `;
+                break;
         }
 
         el.innerHTML += `<span>${ERRORS[errCode]}</span>`;
@@ -155,9 +165,7 @@ const loading = () => {
 
     el.id = "loading";
     el.innerHTML = `
-        <div class="loadingio-spinner-spinner-wfa2piygvs"><div class="ldio-ugwrudymdy">
-        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-        </div></div>    
+        <div class="spinner"></div>
         <span>Зачекайте, будь ласка</span>
     `;
 
@@ -195,7 +203,7 @@ const SetProfileData = (profileData) => {
                 <h2>${profileData.nam} </h2>
                 <div id='profile-rating' class="profile-rating" style='display:none'>
                     <span></span>
-                    <svg><use href="#star-solid"/></svg>
+                    <svg><use href="#star-filled"/></svg>
                 </div>
             </div>
             <div>

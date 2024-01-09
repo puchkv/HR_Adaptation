@@ -142,8 +142,8 @@ class TasksController {
 
             taskHtml += `
                 <div class="sp-line"></div>
-                <div class="card">
-                    <h3>Оцініть виконання задачі</h3>
+                <div class="card p-16">
+                    <h3>Як ви оцінюєте виконання завдання?</h3>
                     <div class="rating my-12">
                         <svg><use href="#star" /></svg>
                         <svg><use href="#star" /></svg>
@@ -152,7 +152,7 @@ class TasksController {
                         <svg><use href="#star" /></svg>
                     </div>
 
-                    <textarea id="task-comment" placeholder="Коментар"></textarea>
+                    <textarea id="task-comment" placeholder="Коментар до оцінки"></textarea>
                 </div>
             `;
 
@@ -203,33 +203,48 @@ class TasksController {
             
             // taskHtml += `</div></div>`;
 
-            taskHtml += `
-            <div class="card icon flex-row">
-                <div class="icon-hint">
-                    <svg><use href="#chat"/></svg>
-                </div>
-                <div>
-                    <span style="font-weight: bold;">Коментар до оцінки</span>
-                    <p>${task.rate_comm}</p>
-                </div>
-            </div>
-        `;
+            // Variant 2.0
+            // taskHtml += `
+            // <div class="card icon flex-row">
+            //     <div class="icon-hint">
+            //         <svg><use href="#chat"/></svg>
+            //     </div>
+            //     <div>
+            //         <span style="font-weight: bold;">Коментар до оцінки</span>
+            //         <p>${task.rate_comm}</p>
+            //     </div>
+            // </div>`;
 
+            // Figma variant
             taskHtml += `
-                <div class="card">
-                    <div class="rating my-12 w-80">
-                `;
-            
-            for(let i = 1; i <= 5; i++) {
-                taskHtml += i <= task.rate 
-                    ? `<svg><use href="#star-filled" /></svg>` 
-                    : `<svg><use href="#star" /></svg>`;  
-            }   
-            
-            taskHtml += `
+                <div class="card task-comment">
+                    <div class="flex-row gap-4 mb-6">
+                        <h3 class="bold">Оцінка ${task.rate}</h3>
+                        <svg><use href="#star-filled"/></svg>
+                    </div>
+
+                    <div class="flex-row row-start">
+                        <svg class="chat-icon"><use href="#chat"/></svg>
+                        <p>${task.rate_comm}</p>
                     </div>
                 </div>
             `;
+
+            // taskHtml += `
+            //     <div class="card">
+            //         <div class="rating my-12 w-80">
+            //     `;
+            
+            // for(let i = 1; i <= 5; i++) {
+            //     taskHtml += i <= task.rate 
+            //         ? `<svg><use href="#star-filled" /></svg>` 
+            //         : `<svg><use href="#star" /></svg>`;  
+            // }   
+            
+            // taskHtml += `
+            //         </div>
+            //     </div>
+            // `;
 
             document.getElementById("taskView").innerHTML = taskHtml;
         }
@@ -271,7 +286,10 @@ class TasksController {
         let comm = document.getElementById("task-comment")?.value;
 
         if(comm == null || comm === '' || typeof comm === 'undefined') {
-            return window.Telegram.WebApp.showAlert("Не вказано коментар!");
+            if(Utils.isTelegramClient)
+                return window.Telegram.WebApp.showAlert("Не вказано коментар!");
+            else
+                return alert("Вкажіть коментар!");
         }
 
         API.send("POST_RATE_TASK", JSON.stringify({
@@ -287,7 +305,7 @@ class TasksController {
             }
 
         }).catch(error => {
-            console.error(`[RateTask]: ${error}`);
+            return error;
         });
 
     }

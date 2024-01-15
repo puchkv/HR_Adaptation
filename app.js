@@ -90,13 +90,20 @@ window.onload = async () => {
 
     window.addEventListener("app-loaded", function() {
         document.getElementById("loading").remove();
-        Utils.loadScreen("tasks"); // entry point
+
+        switch(Utils.SearchParams.get("page")) {
+            case "polls": Utils.loadScreen("polls");
+            case "team": Utils.loadScreen("teamMembers");
+            default: Utils.loadScreen("tasks");
+        }
+    
+        // Utils.loadScreen("tasks"); // entry point
     });
 
     window.addEventListener("app-failed", function(event) {
 
         let errCode = event?.detail?.code == '' ? "RESPONSE_FAILED" : event.detail.code;
-        
+    
         console.log(errCode);
 
         let el = document.createElement("section");

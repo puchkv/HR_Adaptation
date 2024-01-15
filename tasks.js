@@ -251,16 +251,8 @@ class TasksController {
         
         Utils.loadScreen("taskView");
 
-        if(!this.#User.isNewbee || (task.status_id != 1 || task.status_id != 3)) 
+        if(this.#User.isNewbee && task.status_id == this.#statuses.IN_PROGRESS) 
         {   
-            Utils.showMainButton("Назад", function() {
-                Utils.loadScreen('tasks');
-                Utils.hideMainButton();
-                Utils.showNav();
-            });
-        }
-        else 
-        {
             Utils.showBackButton(() => Utils.loadScreen('tasks'));
             Utils.showMainButton("Виконано", function () {
                 API.send("POST_COMPLETE_TASK", JSON.stringify({ id: task.id})
@@ -277,6 +269,14 @@ class TasksController {
                 }).catch(error => {
                     return console.error(error);
                 });
+            });
+        }
+        else 
+        {
+            Utils.showMainButton("Назад", function() {
+                Utils.loadScreen('tasks');
+                Utils.hideMainButton();
+                Utils.showNav();
             });
         }   
     }

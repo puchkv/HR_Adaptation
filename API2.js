@@ -130,8 +130,8 @@ class API {
         if(route === null || typeof route === 'undefined')
             Utils.throwError("ROUTE_NOT_FOUND");
 
-        //let initData = window.Telegram.WebApp.initData; // production using
-        let initData = ''; // for local testing in Telegram
+        let initData = window.Telegram.WebApp.initData; // production using
+        //let initData = ''; // for local testing in Telegram
 
         if(typeof initData === 'undefined' || initData === null || initData === '')
             initData = this.#initData;

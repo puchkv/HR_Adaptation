@@ -385,7 +385,7 @@ class PollsController {
             }
             else
             {
-                for(let poll of polls) {
+                for(let poll of polls.filter(p => p.recipient_type_id == 1 && p.status == false)) {
                     html += this.#getCardHtml(poll);
                 }
             }
@@ -432,7 +432,7 @@ class PollsController {
             }
             else
             {
-                for(let poll of polls) {
+                for(let poll of polls.filter(p => p.recipient_type_id == 1 && p.status == true)) {
                     html += this.#getCardHtml(poll);
                 }
             }

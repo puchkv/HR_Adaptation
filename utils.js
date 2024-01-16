@@ -34,11 +34,29 @@ class Utils {
             
             screen.style.removeProperty("display");
 
+            this.setActiveNavButton(screenName);
+
             window.dispatchEvent(new CustomEvent("screenChanged"));
 
             this.initTextarea();
         }
     }
+
+
+    setActiveNavButton(currentScreen) {
+        document.querySelector("nav").querySelectorAll("div").forEach(btn => {
+            if(btn?.dataset.route === currentScreen) {
+                if(!btn?.classList.contains("checked"))
+                    btn?.classList?.add("checked");
+            } else {
+                if(btn?.classList?.contains("checked")) {
+                    btn.classList?.remove("checked");
+                }
+            }
+        });
+    }
+
+
     
     getNoun = (number, one, two, five) => {
         let n = Math.abs(number);

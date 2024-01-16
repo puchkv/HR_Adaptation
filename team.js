@@ -33,15 +33,19 @@ class TeamController {
                 <div class="cards expanded">
         `;
 
-        if(mentorIsHead) 
+        if(this.#members.head) 
         {
-            html += this.#getMemberCard(this.#members.head, "Керівник та наставник");
+            if(mentorIsHead) 
+            {
+                html += this.#getMemberCard(this.#members.head, "Керівник та наставник");
+            }
+            else 
+            {
+                html += this.#getMemberCard(this.#members.head, "Керівник");
+                html += this.#getMemberCard(this.#members.mentor, "Наставник");
+            }
         }
-        else 
-        {
-            html += this.#getMemberCard(this.#members.head, "Керівник");
-            html += this.#getMemberCard(this.#members.mentor, "Наставник");
-        }
+
 
         html += this.#getMemberCard(this.#members.hr, "HR менеджер");
         html += `</div>`;
@@ -56,7 +60,8 @@ class TeamController {
         `;
 
         for(let m of this.#members.colleagues.members) {
-            html += this.#getMemberCard(m);
+            if(m.length > 0)
+                html += this.#getMemberCard(m);
         }
 
         html += `</div>`;
@@ -64,6 +69,9 @@ class TeamController {
         Object.entries(this.#members.colleagues.pod_siblings).forEach(entry => {
 
             let [i, pod] = entry;
+
+            if(pod.members?.length <= 0)
+                return;
 
             html += `
                 <div class="roulette-header text-sm color-hint">
@@ -93,20 +101,20 @@ class TeamController {
             <div class="card icon flex-row">
                 <div class="icon-hint">
                     ${
-                        member.photo_url !== '' ?
-                        `<img src='${member.photo_url}'/>` : 
+                        member?.photo_url ?
+                        `<img src='${member?.photo_url}'/>` : 
                         '<svg><use href="#profile"/></svg>'
                     }
                 </div>
                 <div class='member-card'>
                     <span style="font-weight: bold;">
-                        ${
-                            member.fam + ' ' + 
-                            member.nam + ' ' +
-                            member.otch
+                        ${  
+                            member?.fam + ' ' + 
+                            member?.nam + ' ' +
+                            member?.otch
                         }
                     </span>
-                    <p>${ pos !== '' ? pos : member.pos}</p>
+                    <p>${ pos !== '' ? pos : member?.pos}</p>
                 </div>
             </div>
         `;

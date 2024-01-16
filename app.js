@@ -92,9 +92,9 @@ window.onload = async () => {
         document.getElementById("loading").remove();
 
         switch(Utils.SearchParams.get("page")) {
-            case "polls": Utils.loadScreen("polls");
-            case "team": Utils.loadScreen("teamMembers");
-            default: Utils.loadScreen("tasks");
+            case "polls": Utils.loadScreen("polls"); break;
+            case "team": Utils.loadScreen("teamMembers"); break;
+            default: Utils.loadScreen("tasks"); break;
         }
     
         // Utils.loadScreen("tasks"); // entry point

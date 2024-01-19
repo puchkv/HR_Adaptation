@@ -37,6 +37,8 @@ window.onload = async () => {
                 User.Inn = inn;
                 User.Role = User.GetRole(inn, response.data);
 
+                console.log(User.isUnknown);
+
                 if(User.isUnknown)
                     Utils.throwError("USER_HAS_NO_ROLE");
 
@@ -57,11 +59,15 @@ window.onload = async () => {
                 UpdateProfileProgress();
 
                 window.dispatchEvent(new Event("app-loaded"));
-            });
+            }).catch(error => {
+                console.error(error);
+                window.dispatchEvent(new CustomEvent('app-failed', { detail: error }));
+            })
 
         })
         .catch(error => {
-            console.log(error.code);
+            console.error(error);
+            Sentry.captureException(error);
             window.dispatchEvent(new CustomEvent('app-failed', { detail: error }));
             return;
         });
@@ -104,8 +110,6 @@ window.onload = async () => {
 
         let errCode = event?.detail?.code == '' ? "RESPONSE_FAILED" : event.detail.code;
     
-        console.log(errCode);
-
         let el = document.createElement("section");
         el.id = "error-page";
         el.classList.add('empty-page');
@@ -113,31 +117,24 @@ window.onload = async () => {
         switch(errCode) {
             case "RESPONSE_FAILED":
                 el.innerHTML += `
-                    <picture>
-                        <source srcset="./icons/empty.apng" type="image/apng">
-                        <img src='./icons/empty.apng' />
-                    </picture>
+                    <dotlottie-player src="./icons/eyes.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>
                 `; 
                 break;
             case "TOKEN_NOT_FOUND":
                 el.innerHTML += `
-                    <picture>
-                        <source srcset="./icons/locker.apng" type="image/apng">
-                        <img src='./icons/locker.apng' />
-                    </picture>
-                `; 
+                    <dotlottie-player src="./icons/denied.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>`;
                 break;
             case "ROUTE_NOT_FOUND":
+                el.innerHTML += 
+                    `<dotlottie-player src="./icons/empty.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>`;
+                break;
+            case "USER_HAS_NO_ROLE":
                 el.innerHTML += `
-                    <picture>
-                        <source srcset="./icons/empty.apng" type="image/apng">
-                        <img src='./icons/empty.apng' />
-                    </picture>
-                `;
+                    <dotlottie-player src="./icons/unknown.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>`;
                 break;
         }
-
-        el.innerHTML += `<span>${ERRORS[errCode]}</span>`;
+ 
+        el.innerHTML += `<span>${event?.detail?.message}</span>`;
 
         document.body.appendChild(el);
         Utils.loadScreen('error-page');
@@ -189,16 +186,20 @@ const SetProfileData = (profileData) => {
     profileCard.classList.add('profile-header');
 
     let experience = () => {
-        let monthes = Utils.getMonthsDifferenceByDays(profileData.seniority);
+        let months = Utils.getMonthsDifferenceByDays(profileData.seniority);
 
-        switch(monthes) {
+        switch(months) {
             case 1: return "Перший місяць в компанії 🐣";
             case 2: return "Другий місяць в компанії 🤓";
             case 3: return "Третій місяць в компанії 🥳";
             case 4: return "Четвертий місяць в компанії";
             case 5: return "П'ять місяців в компанії";
             case 6: return "Півроку в компнаії";
-            case 7-11: return "Більше півроку в компанії";
+            case 7: 
+            case 8:
+            case 9:
+            case 10:
+            case 11: return "Більше півроку в компанії";
             case 12: return "Рік в компанії";
             default: return "Більше року в компанії";
         }
@@ -236,17 +237,22 @@ const SetProfileData = (profileData) => {
 }
 
 const CalcProfileProgress = () => {
-   
-    let tasks = document.querySelectorAll('#tasks>.roulette>.cards>.card');
-    let polls = document.querySelectorAll('#polls>.roulette>.cards>.card');
 
-    let count = tasks.length + polls.length;
+    // let pollsOverall = PollsController.OverallCount;
+    
+    // let tasks = document.querySelectorAll('#tasks>.roulette>.cards>.card');
+    // let polls = document.querySelectorAll('#polls>.roulette>.cards>.card');
 
-    let doneTasks = document.querySelectorAll('#tasks>.roulette>.cards>.card[data-done="true"]');
-    let donePolls = document.querySelectorAll('#polls>.roulette>.cards>.card[data-done="true"]');
-    let doneCount = doneTasks.length + donePolls.length;
+    // let count = tasks.length + polls.length;
 
-    let result = Math.round((doneCount * 100 / count));
+    // let doneTasks = document.querySelectorAll('#tasks>.roulette>.cards>.card[data-done="true"]');
+    // let donePolls = document.querySelectorAll('#polls>.roulette>.cards>.card[data-done="true"]');
+    // let doneCount = doneTasks.length + donePolls.length;
+
+    let overallCount = PollsController.OverallCount + TasksController.OverallCount;
+    let closedCount = PollsController.ClosedCount + TasksController.ClosedCount;
+
+    let result = Math.round((closedCount * 100 / overallCount));
 
     return (isNaN(result) || result <= 0) ? 0 : result;
 }

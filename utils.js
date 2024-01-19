@@ -99,7 +99,7 @@ class Utils {
         if(formattedDate == null || typeof formattedDate === 'undefined')
             return '';
 
-        return new Date(formattedDate.replace(/(.*)\.(.*)\.(.*)/, '$3-$2-$1'));
+        return new Date(formattedDate.replace(/(.*)\.(.*)\.(.*)/, '$2-$1-$3'));
     }
 
     hideNav = () => {
@@ -206,7 +206,7 @@ class Utils {
         if(errorCode == '' || ERRORS[errorCode] == null || typeof ERRORS[errorCode] === 'undefined')
             return console.error(`Utils.throwError: errorCode is not specified`);
 
-        const error = new Error(ERRORS[errorCode]);
+        let error = new Error(ERRORS[errorCode]);
         error.code = errorCode;
 
         throw error;
@@ -379,19 +379,24 @@ class Utils {
         let emoji = null;
 
         switch(type) {
-            case "thumb": emoji = './icons/thumb.apng'; break;
-            case "party": emoji = './icons/party.apng'; break;
-            default: emoji = './icons/thumb.apng'; break;
+            case "thumb": emoji = './icons/thumb.json'; break;
+            case "party": emoji = './icons/popper.json'; break;
+            case "denied": emoji = './icons/denied.json'; break;
+            default: emoji = './icons/thumb.json'; break;
         }
-        
-        let gif = document.createElement("picture");
 
-        gif.innerHTML = `
-            <source srcset='${emoji}' type="image/apng">
-            <img src='${emoji}' />
+        let lottie = `
+            <dotlottie-player src="${emoji}" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>
         `;
+        
+        // let gif = document.createElement("picture");
 
-        el.appendChild(gif);
+        // gif.innerHTML = `
+        //     <source srcset='${emoji}' type="image/apng">
+        //     <img src='${emoji}' />
+        // `;
+
+        el.innerHTML += lottie;
         
         let textEl = document.createElement("span");
         textEl.innerText = text;

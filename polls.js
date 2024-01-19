@@ -8,8 +8,24 @@ class PollsController {
     #element = '';
     #polls = [];
     #User = null;
+
+    #overallCount = 0;
     
     currentPoll = 0;
+
+    get OverallCount() {
+        return this.#overallCount;
+    }
+
+    get ClosedCount() {
+        switch(this.#User.Role) {
+            case User.Roles.Newbee: 
+                return this.#polls.filter(p => p.recipient_type_id == 1 && p.status == true).length;
+            default: 
+                return this.#polls.filter(p => p.status == true).length;
+        }
+        
+    }
 
     initialize(polls, user) 
     {
@@ -24,15 +40,15 @@ class PollsController {
 
         this.#element = document.getElementById(this.#section);
 
-        this.#polls = polls.sort((p1, p2) => this.sort(p1, p2));
+        this.#overallCount = polls.length;
+
+        this.#polls = polls.filter(poll => Utils.getISODate(poll.date_send) <= Date.now())
+                            .sort((p1, p2) => this.sort(p1, p2));
 
         this.#renderAll();
     }    
 
     start(poll) {
-
-        console.log(`poll started`);
-        console.log(poll);
 
         if(poll == null || typeof poll === 'undefined')
             return console.warn(`PollsController.start(): Poll with id ${poll.id} not found!`);
@@ -161,8 +177,6 @@ class PollsController {
     }
 
     isAnyEmptyAnswer() {
-
-        console.log("any answer checked CALLED");
 
         let questions = document.getElementById('activePoll').querySelectorAll(".card");
 
@@ -332,9 +346,7 @@ class PollsController {
         let html = '<div class="roulette">';
 
         if(this.#polls == null || this.#polls.length == 0) {
-            html += `
-                <h1>Питання відсутні</h1>
-            `;
+            return this.showEmpty();
         }
 
         let polls = null;
@@ -346,7 +358,9 @@ class PollsController {
             default: polls = null; break;
         }
 
-        if(polls == null) {
+        console.log(polls);
+
+        if(polls == null || polls.length == 0) {
             return this.showEmpty();
         }
 
@@ -385,7 +399,7 @@ class PollsController {
             }
             else
             {
-                for(let poll of polls.filter(p => p.recipient_type_id == 1 && p.status == false)) {
+                for(let poll of polls.filter(p => p.recipient_type_id == 2 && p.status == false)) {
                     html += this.#getCardHtml(poll);
                 }
             }
@@ -432,7 +446,7 @@ class PollsController {
             }
             else
             {
-                for(let poll of polls.filter(p => p.recipient_type_id == 1 && p.status == true)) {
+                for(let poll of polls.filter(p => p.recipient_type_id == 2 && p.status == true)) {
                     html += this.#getCardHtml(poll);
                 }
             }
@@ -490,8 +504,8 @@ class PollsController {
     }
 
     sort(p1, p2) {
-        let date1 = new Date(Utils.getISODate(p1.date_to));
-        let date2 = new Date(Utils.getISODate(p2.date_to));
+        let date1 = Utils.getISODate(p1.date_to);
+        let date2 = Utils.getISODate(p2.date_to);
 
         return date1 - date2 || p1.status != p2.status;
     }

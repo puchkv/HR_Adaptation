@@ -60,8 +60,7 @@ class TeamController {
         `;
 
         for(let m of this.#members.colleagues.members) {
-            if(m.length > 0)
-                html += this.#getMemberCard(m);
+            html += this.#getMemberCard(m);
         }
 
         html += `</div>`;

@@ -15,6 +15,15 @@ class TasksController {
         RATED: 3
     }
 
+    get OverallCount() {
+        return this.#tasks.length;
+    }
+
+    get ClosedCount() {
+        return this.#tasks.filter(t => t.status_id != this.#statuses.IN_PROGRESS).length;
+    }
+
+
     initialize(tasks, user) {
 
         if(tasks === null || typeof tasks === 'undefined' || 
@@ -27,7 +36,6 @@ class TasksController {
         this.#User = user;
         this.#tasks = tasks.sort((t1, t2) => this.sort(t1, t2));
 
-        
         let generalTasks = tasks.filter((t) => t.category.includes("Загальна програма"));
         let individualTasks = tasks.filter((t) => t.category.includes("Індивідуальна програма"));
 
@@ -394,8 +402,8 @@ class TasksController {
 
     sort(t1, t2) {
 
-        var date1 = new Date(Utils.getISODate(t1.date_to));
-        var date2 = new Date(Utils.getISODate(t2.date_to));
+        var date1 = Utils.getISODate(t1.date_to);
+        var date2 = Utils.getISODate(t2.date_to);
 
         return (t1.status_id - t2.status_id || date1 - date2);
     }

@@ -51,6 +51,7 @@ class User {
             case adaptation.card.inn: return this.Roles.Newbee;
             case adaptation.mentor.inn: return this.Roles.Mentor;
             case adaptation.hr.inn: return this.Roles.HR;
+            // to do add new role
             default: return this.Roles.UNKNOWN;
         }
     }
@@ -68,8 +69,7 @@ class User {
                     return response.data.personal.inn;
                 })
                 .catch(error => {
-                    console.error(error);
-                    return null;
+                    return error;
                 })
         );
     }

@@ -1190,6 +1190,10 @@ input[type="text"]:disabled, textarea:disabled {
    }
 }
 
+dotlottie-player {
+    max-width: 50% !important;
+}
+
 
 /* 
 .radiocheck.checked::after {

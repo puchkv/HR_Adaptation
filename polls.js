@@ -358,8 +358,6 @@ class PollsController {
             default: polls = null; break;
         }
 
-        console.log(polls);
-
         if(polls == null || polls.length == 0) {
             return this.showEmpty();
         }
@@ -399,7 +397,7 @@ class PollsController {
             }
             else
             {
-                for(let poll of polls.filter(p => p.recipient_type_id == 2 && p.status == false)) {
+                for(let poll of polls.filter(p => p.recipient_type_id == this.#User.Role && p.status == false)) {
                     html += this.#getCardHtml(poll);
                 }
             }
@@ -446,7 +444,7 @@ class PollsController {
             }
             else
             {
-                for(let poll of polls.filter(p => p.recipient_type_id == 2 && p.status == true)) {
+                for(let poll of polls.filter(p => p.recipient_type_id == this.#User.Role && p.status == true)) {
                     html += this.#getCardHtml(poll);
                 }
             }

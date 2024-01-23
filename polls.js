@@ -45,6 +45,8 @@ class PollsController {
         this.#polls = polls.filter(poll => Utils.getISODate(poll.date_send) <= Date.now())
                             .sort((p1, p2) => this.sort(p1, p2));
 
+        console.log(this.#polls);
+
         this.#renderAll();
     }    
 
@@ -409,7 +411,7 @@ class PollsController {
 
         html += '</div>';   
 
-        if(this.#polls.some(p => p.status == true)) {
+        if(polls.some(p => p.status == true)) {
 
             html += `
                 <div class="roulette-header">

@@ -538,8 +538,9 @@ svg {
     height: 20px !important;
     background: transparent;
     outline: 1px solid var(--link-color);
-    border-radius: 50%;
     -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
     cursor: pointer;
     align-items: center;
     justify-content: center;

@@ -42,7 +42,7 @@ class PollsController {
 
         this.#overallCount = polls.length;
 
-        this.#polls = polls.filter(poll => Utils.getISODate(poll.date_send) <= Date.now())
+        this.#polls = polls.filter(poll => Utils.getISODate(poll.date_send) <= new Date())
                             .sort((p1, p2) => this.sort(p1, p2));
 
         console.log(this.#polls);

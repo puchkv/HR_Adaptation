@@ -538,7 +538,7 @@ svg {
     height: 20px !important;
     background: transparent;
     outline: 1px solid var(--link-color);
-    border-radius: 50%;
+    border-radius: 100%;
     cursor: pointer;
     align-items: center;
     justify-content: center;
@@ -1111,7 +1111,6 @@ label.checkbox > input[type="checkbox"]:checked ~ svg {
     align-items: center;
     text-align: center;
     justify-content: center;
-    height: 100%;
 }
 
 .empty-page > picture {

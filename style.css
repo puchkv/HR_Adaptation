@@ -1069,6 +1069,8 @@ label.checkbox > input[type="checkbox"]:checked ~ svg {
 }
 
 .full-rounded {
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
     border-radius: 100%;
 }
 

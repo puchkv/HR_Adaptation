@@ -323,7 +323,7 @@ class TasksController {
         <div class="card" data-task=${task.id} 
             data-done=${task.status_id != this.#statuses.IN_PROGRESS}>
             <div class="card-body">
-                <div class="radiocheck 
+                <div class="radiocheck full-rounded 
                 ${task.status_id != this.#statuses.IN_PROGRESS ? 'checked' : ''}">
                 ${task.status_id != this.#statuses.IN_PROGRESS ? `<svg><use href="#checkmark-hint"/></svg>` : `<svg><use href="#checkmark"/></svg>`}
                 </div>

@@ -537,7 +537,10 @@ svg {
     width: 20px;
     height: 20px !important;
     background: transparent;
-    outline: 1px solid var(--link-color);
+    /*outline: 1px solid var(--link-color);*/
+    /*border: 1px solid var(--link-color);*/
+    -webkit-box-shadow: 0px 0px 0px 1px var(--link-color);
+    box-shadow: 0 0 0px 1px var(--link-color);
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
@@ -552,7 +555,9 @@ svg {
 }
 
 .radiocheck.checked {
-    outline: 1px solid var(--hint-color);
+    /*outline: 1px solid var(--hint-color);*/
+    -webkit-box-shadow: 0px 0px 0px 1px var(--hint-color);
+    box-shadow: 0 0 0px 1px var(--hint-color);
 }
 
 .radiocheck.checked > svg {

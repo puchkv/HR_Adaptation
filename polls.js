@@ -42,17 +42,9 @@ class PollsController {
 
         this.#overallCount = polls.length;
 
-        console.log(polls);
-
-        this.#polls = polls.filter(poll => {
-            Utils.getISODate(poll.date_send) <= new Date();
-            console.log(poll.id);
-            console.log(Utils.getISODate(poll.date_send));
-            console.log(Utils.getISODate(poll.date_send) <= new Date());
-            console.log(Utils.getISODate(poll.date_send) <= Date.now);
-        }).sort((p1, p2) => this.sort(p1, p2));
-
-        console.log(this.#polls);
+        this.#polls = polls.filter(poll => 
+            moment() >= moment(poll.date_send, "dd.MM.yyyy")
+            ).sort((p1, p2) => this.sort(p1, p2));
 
         this.#renderAll();
     }    
@@ -511,10 +503,11 @@ class PollsController {
     }
 
     sort(p1, p2) {
-        let date1 = Utils.getISODate(p1.date_to);
-        let date2 = Utils.getISODate(p2.date_to);
+        
+        let format = "dd.MM.yyyy";
 
-        return date1 - date2 || p1.status != p2.status;
+        return moment(p1.date_to, format) - moment(p2.date_to, format) 
+            || p1.status != p2.status;
     }
 } 
 

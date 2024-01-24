@@ -402,10 +402,10 @@ class TasksController {
 
     sort(t1, t2) {
 
-        var date1 = Utils.getISODate(t1.date_to);
-        var date2 = Utils.getISODate(t2.date_to);
+        let format = "dd.MM.yyyy";
 
-        return (t1.status_id - t2.status_id || date1 - date2);
+        return (t1.status_id - t2.status_id 
+            || moment(t1.date_to, format) - moment(t2.date_to, format));
     }
 
 

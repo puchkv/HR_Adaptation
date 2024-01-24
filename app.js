@@ -37,8 +37,6 @@ window.onload = async () => {
                 User.Inn = inn;
                 User.Role = User.GetRole(inn, response.data);
 
-                console.log(User.isUnknown);
-
                 if(User.isUnknown)
                     Utils.throwError("USER_HAS_NO_ROLE");
 

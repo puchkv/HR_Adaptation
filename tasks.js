@@ -394,8 +394,8 @@ class TasksController {
     showEmpty() {
         document.getElementById(this.#section).innerHTML += `
             <div class='empty-page'>
-                <img src='./images/check-hint.png' />
-                <span>Завдання відсутні</span>
+                <dotlottie-player src="./icons/empty.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>
+                <span>Завдання відсутні, можна відпочити</span>
             </div>
         `;
     }

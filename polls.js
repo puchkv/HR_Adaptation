@@ -495,7 +495,7 @@ class PollsController {
 
         document.getElementById(this.#section).innerHTML += `
             <div class='empty-page'>
-                <img src='./images/question-hint.png' />
+                <dotlottie-player src="./icons/empty.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>
                 <span>Опитувань немає</span>
             </div>
         `;

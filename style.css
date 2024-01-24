@@ -1116,10 +1116,16 @@ label.checkbox > input[type="checkbox"]:checked ~ svg {
 .empty-page {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     align-items: center;
     text-align: center;
     justify-content: center;
+    flex: 1;
+    height: 80%;
+}
+
+.empty-page > dotlottie-player {
+    width: 70% !important;
+    max-width: 70% !important;
 }
 
 .empty-page > picture {

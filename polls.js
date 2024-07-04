@@ -43,7 +43,7 @@ class PollsController {
         this.#overallCount = polls.length;
 
         this.#polls = polls.filter(poll => 
-            moment() >= moment(poll.date_send, "dd.MM.yyyy")
+            moment() >= moment(poll.date_send, "DD.MM.YYYY")
             ).sort((p1, p2) => this.sort(p1, p2));
 
         this.#renderAll();

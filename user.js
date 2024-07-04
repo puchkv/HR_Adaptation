@@ -8,9 +8,14 @@ class User {
     #_role = null;
 
     Roles = {
-        Newbee: 1,
-        Mentor: 2,
-        HR: 3,
+        Newbee: 1,      // Новачок (ветеран)
+        Mentor: 2,      // Наставник
+        Head: 3,        // Наставник
+        HR: 4,          // HR
+        Chaperone: 5,   // Супроводжуючий
+        Lawyer: 6,      // Юрист
+        Personnel: 7,   // Працівник кадрів
+        Educator: 8,    // Провідник навчання
         UNKNOWN: -1
     };
 
@@ -31,7 +36,7 @@ class User {
     }
 
     get isMentor() {
-        return this.Role === this.Roles.Mentor;
+        return this.Role === this.Roles.Mentor || this.Role === this.Roles.Head;
     }
 
     get isNewbee() {
@@ -39,7 +44,7 @@ class User {
     }
 
     get isHR() {
-        return this.Role === this.Roles.HR;
+        return this.Role === this.Roles.HR || this.Role === this.Roles.Chaperone;
     }
 
     get isUnknown() {
@@ -51,6 +56,13 @@ class User {
             case adaptation.card.inn: return this.Roles.Newbee;
             case adaptation.mentor.inn: return this.Roles.Mentor;
             case adaptation.hr.inn: return this.Roles.HR;
+            // new roles
+            case adaptation.vhr?.inn: return this.Roles.Personnel;
+            case adaptation.head?.inn: return this.Roles.Head;
+            case adaptation.sup?.inn: return this.Roles.Chaperone;
+            case adaptation.advoc?.inn: return this.Roles.Lawyer;
+            case adaptation.edu?.inn: return this.Roles.Educator;
+
             // to do add new role
             default: return this.Roles.UNKNOWN;
         }

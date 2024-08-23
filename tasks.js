@@ -35,13 +35,7 @@ class TasksController {
 
         this.#User = user;
 
-        switch(this.#User.Role) {
-            case User.Roles.Newbee: tasks = tasks.filter(p => p.recipient_type_id == 1); break;
-            case User.Roles.Mentor: polls = tasks.filter(p => p.recipient_type_id == 3); break;
-            case User.Roles.Chaperone: polls = tasks.filter(p => p.recipient_type_id == 6); break;
-            case User.Roles.HR: polls = tasks; break;
-            default: tasks = null; break;
-        }
+        tasks = tasks.filter(t => t.recipient_type_id === this.#User.Role)
 
         if(tasks === null) {
             this.showEmpty();

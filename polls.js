@@ -38,13 +38,19 @@ class PollsController {
             return this.showEmpty();
         }
 
+        this.#polls = polls
+            .filter(p => p.recipient_type_id === this.#User.Role)
+            .filter(p => moment() >= moment(p.date_send, "DD.MM.YYYY"))
+            .sort((p1, p2) => this.sort(p1, p2));
+
+        if(this.#polls === null) {
+            this.showEmpty();
+            return;
+        }
+
         this.#element = document.getElementById(this.#section);
 
         this.#overallCount = polls.length;
-
-        this.#polls = polls.filter(poll => 
-            moment() >= moment(poll.date_send, "DD.MM.YYYY")
-            ).sort((p1, p2) => this.sort(p1, p2));
 
         this.#renderAll();
     }    
@@ -350,8 +356,9 @@ class PollsController {
             return this.showEmpty();
         }
 
-        let polls = null;
+        let polls = this.#polls;
 
+        /* Switch to init code
         switch(this.#User.Role) {
             case User.Roles.Newbee: polls = this.#polls.filter(p => p.recipient_type_id == 1); break;
             case User.Roles.Mentor: polls = this.#polls.filter(p => p.recipient_type_id == 2); break;
@@ -361,7 +368,7 @@ class PollsController {
 
         if(polls == null || polls.length == 0) {
             return this.showEmpty();
-        }
+        }*/
 
         if(polls.some(p => p.status == false)) {
 

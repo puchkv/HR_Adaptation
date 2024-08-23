@@ -9,12 +9,12 @@ class User {
 
     Roles = {
         Newbee: 1,      // Новачок (ветеран)
-        Mentor: 2,      // Наставник
-        Head: 3,        // Наставник
+        Head: 2,        // Керівник
+        Mentor: 3,      // Наставник
         HR: 4,          // HR
-        Chaperone: 5,   // Супроводжуючий
-        Lawyer: 6,      // Юрист
-        Personnel: 7,   // Працівник кадрів
+        Personnel: 5,   // Працівник кадрів
+        Chaperone: 6,   // Супроводжуючий
+        Lawyer: 7,      // Юрист
         Educator: 8,    // Провідник навчання
         UNKNOWN: -1
     };
@@ -41,6 +41,10 @@ class User {
 
     get isNewbee() {
         return this.Role === this.Roles.Newbee;
+    }
+
+    get isChaperone() {
+        return this.Role === this.Roles.Chaperone;
     }
 
     get isHR() {

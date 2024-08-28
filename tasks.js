@@ -35,7 +35,7 @@ class TasksController {
 
         this.#User = user;
 
-        tasks = tasks.filter(t => t.recipient_type_id === this.#User.Role)
+        tasks = tasks.filter(t => t.recipient_type_id === this.#User.Role);
 
         if(tasks === null) {
             this.showEmpty();

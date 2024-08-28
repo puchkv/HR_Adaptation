@@ -380,6 +380,15 @@ class PollsController {
                 <div class="cards expanded">
                 `;
 
+            // Власні откриті опитування по ІНН
+            var selfPolls = polls.filter(p => p.recipient.inn == this.#User.Inn && p.status == false);
+            if(selfPolls.length > 0) 
+            {
+                for(let poll of selfPolls) {
+                    html += this.#getCardHtml(poll);
+                }
+            }
+
             // HR-фахівець бачить опитування всіх
             if(this.#User.isHR) {
 
@@ -403,12 +412,6 @@ class PollsController {
                     }
                 }
             }
-            else
-            {
-                for(let poll of polls.filter(p => p.recipient_type_id == this.#User.Role && p.status == false)) {
-                    html += this.#getCardHtml(poll);
-                }
-            }
 
             // for(let poll of this.#polls.filter(p => p.status == false)) {
             //     html += this.#getCardHtml(poll);
@@ -426,6 +429,15 @@ class PollsController {
                 
                 <div class="cards expanded">
                 `;
+
+            // Власні закриті опитування по ІНН
+            var selfPolls = polls.filter(p => p.recipient.inn == this.#User.Inn && p.status == true);
+            if(selfPolls.length > 0) 
+            {
+                for(let poll of selfPolls) {
+                    html += this.#getCardHtml(poll);
+                }
+            }
 
             // HR-фахівець бачить опитування всіх
             if(this.#User.isHR) {
@@ -448,12 +460,6 @@ class PollsController {
                     for(let poll of newbeePolls) {
                         html += this.#getCardHtml(poll);
                     }
-                }
-            }
-            else
-            {
-                for(let poll of polls.filter(p => p.recipient_type_id == this.#User.Role && p.status == true)) {
-                    html += this.#getCardHtml(poll);
                 }
             }
         }

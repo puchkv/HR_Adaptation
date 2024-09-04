@@ -12,7 +12,7 @@ window.onload = async () => {
 
     if(Utils.isTelegramClient) {
         //window.Telegram.WebApp.ready();
-        //window.Telegram.WebApp.expand();
+        window.Telegram.WebApp.expand();
         //window.Telegram.WebApp.enableClosingConfirmation()
     }
     

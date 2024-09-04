@@ -35,18 +35,14 @@ class TasksController {
 
         this.#User = user;
 
-        tasks = tasks.filter(t => t.recipient_type_id === this.#User.Role);
-
-        if(tasks === null) {
-            this.showEmpty();
-            return;
-        }
+        // tasks = tasks.filter(t => t.recipient_type_id === this.#User.Role);
 
         this.#tasks = tasks.sort((t1, t2) => this.sort(t1, t2));
 
         let generalTasks = tasks.filter((t) => t.category.includes("Загальна програма"));
         let individualTasks = tasks.filter((t) => t.category.includes("Індивідуальна програма"));
 
+        
         let generalTypes = generalTasks.map(t => t.type).filter((value, index, self) => self.indexOf(value) === index);
         let individualTypes = individualTasks.map(t => t.type).filter((value, index, self) => self.indexOf(value) === index);
 

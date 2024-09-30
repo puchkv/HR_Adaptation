@@ -1,6 +1,7 @@
 import Utils from "./utils.js";
 import API from './API2.js';
 import User from './user.js';
+import Resources from './resources.js';
 
 class PollsController {
 
@@ -87,7 +88,7 @@ class PollsController {
 
                 for(let ans of q.answers.filter(a => a.is_text)) {
                     html += `
-                        <textarea id='${ans.id}' name='${q.id}' placeholder="Введіть вашу відповідь"></textarea>
+                        <textarea id='${ans.id}' name='${q.id}' placeholder="${Resources.getPhrase('ENTER_YOUR_ANSWER')}"></textarea>
                     `;
                 }
             }
@@ -109,7 +110,7 @@ class PollsController {
 
                 for(let ans of q.answers.filter(a => a.is_text)) {
                     html += `
-                        <textarea id='${ans.id}' name='${q.id}' placeholder="Введіть вашу відповідь"></textarea>
+                        <textarea id='${ans.id}' name='${q.id}' placeholder="${Resources.getPhrase('ENTER_YOUR_ANSWER')}"></textarea>
                     `;
                 }
             }
@@ -122,7 +123,7 @@ class PollsController {
         Utils.loadScreen('pollPassing');
         Utils.checkInputs();
 
-        Utils.showMainButton('Надіслати відповіді', () => this.post());
+        Utils.showMainButton(Resources.getPhrase("SEND_ANSWERS"), () => this.post());
         Utils.showBackButton(() => this.view(poll.id));
     }
 
@@ -141,7 +142,7 @@ class PollsController {
                 block: "center",
             });
 
-            window.Telegram.WebApp.showAlert("Вкажіть відповідь на питання!");
+            window.Telegram.WebApp.showAlert(Resources.getPhrase("ANSWER_REQUIRED"));
 
             setTimeout(() => {
                 elem.classList.remove("empty-field");
@@ -166,9 +167,9 @@ class PollsController {
             .then(response => {
                 if(typeof response !== 'undefined' && response.success) {
                     
-                    Utils.showAnimation("party", "Результати опитування надіслано!", false);
+                    Utils.showAnimation("party", Resources.getPhrase("SURVEY_ENDED_SUCCESS"), false);
 
-                    Utils.showMainButton('На головну', function() {
+                    Utils.showMainButton(Resources.getPhrase("TO_HOME_LABEL"), function() {
                         window.location.reload();
                     });
 
@@ -230,7 +231,7 @@ class PollsController {
                     <svg><use href="#calendar"/></svg>
                 </div>
                 <div>
-                    <span style="font-weight: bold;">Дата виконання</span>
+                    <span style="font-weight: bold;">${Resources.getPhrase("DATE_EXECUTE_LABEL")}</span>
                     <p>${poll.date_to.split(' ')[0]}</p>
                 </div>
             </div>
@@ -240,7 +241,7 @@ class PollsController {
                     <svg><use href="#clock"/></svg>
                 </div>
                 <div>
-                    <span style="font-weight: bold;">Орієнтовний час проходження</span>
+                    <span style="font-weight: bold;">${Resources.getPhrase("APPROX_TIME_LABEL")}</span>
                     <p>${poll.time_to}хв</p>
                 </div>
             </div>
@@ -252,7 +253,10 @@ class PollsController {
                 <div>
                     <span>
                     ${poll.questions.length}
-                    ${Utils.getNoun(poll.questions.length, 'питання', 'питання', 'питань')}
+                    ${Utils.getNoun(poll.questions.length, 
+                        Resources.getPhrase("QUESTION_LABEL"), 
+                        Resources.getPhrase("QUESTION_LABEL_2_4"), 
+                        Resources.getPhrase("QUESTIONS_LABEL_5"))}
                     </span>
                 </div>
             </div>
@@ -262,12 +266,12 @@ class PollsController {
 
         if(poll.status) 
         {
-            Utils.showMainButton('Переглянути відповіді', () => this.seeAnswers(poll));
+            Utils.showMainButton(Resources.getPhrase("CHECK_ANSWERS_LABEL"), () => this.seeAnswers(poll));
             Utils.showBackButton(() => Utils.loadScreen('polls'));
         }
         else 
         {
-            Utils.showMainButton('Почати опитування', () => this.start(poll));
+            Utils.showMainButton(Resources.getPhrase("START_SURVEY_LABEL"), () => this.start(poll));
             Utils.showBackButton(() => Utils.loadScreen('polls'));
         }
     }
@@ -340,7 +344,7 @@ class PollsController {
         Utils.loadScreen('pollPassing');
         Utils.checkInputs();
 
-        Utils.showMainButton('Повернутись', function() {
+        Utils.showMainButton(Resources.getPhrase("BACK_LABEL"), function() {
             Utils.loadScreen('polls');
             Utils.showNav();
             Utils.hideMainButton();
@@ -374,7 +378,7 @@ class PollsController {
 
             html += `
                 <div class="roulette-header">
-                    <p>Активні</p>
+                    <p>${Resources.getPhrase("ACTIVE_LABEL")}</p>
                 </div>
                 
                 <div class="cards expanded">
@@ -396,7 +400,7 @@ class PollsController {
                 let mentorPolls = polls.filter(p => p.recipient_type_id == 2 && p.status == false);
                 
                 if(mentorPolls.length > 0) {
-                    html += `<h5>Керівника</h5>`;
+                    html += `<h5>${Resources.getPhrase("TO_LEAD_LABEL")}</h5>`;
                     for(let poll of mentorPolls) {
                         html += this.#getCardHtml(poll);
                     }
@@ -406,7 +410,7 @@ class PollsController {
                 let newbeePolls = polls.filter(p => p.recipient_type_id == 1 && p.status == false);
 
                 if(newbeePolls.length > 0) {
-                    html += `<h5>Новачка</h5>`;
+                    html += `<h5>${Resources.getPhrase("TO_NEWBEE_LABEL")}</h5>`;
                     for(let poll of newbeePolls) {
                         html += this.#getCardHtml(poll);
                     }
@@ -424,7 +428,7 @@ class PollsController {
 
             html += `
                 <div class="roulette-header">
-                    <p>Завершені</p>
+                    <p>${Resources.getPhrase("COMPLETED_TITLE_LABEL")}</p>
                 </div>
                 
                 <div class="cards expanded">
@@ -446,7 +450,7 @@ class PollsController {
                 let mentorPolls = polls.filter(p => p.recipient_type_id == 2 && p.status == true);
                 
                 if(mentorPolls.length > 0) {
-                    html += `<h5>Керівника</h5>`;
+                    html += `<h5>${Resources.getPhrase("TO_LEAD_LABEL")}</h5>`;
                     for(let poll of mentorPolls) {
                         html += this.#getCardHtml(poll);
                     }
@@ -456,7 +460,7 @@ class PollsController {
                 let newbeePolls = polls.filter(p => p.recipient_type_id == 1 && p.status == true);
 
                 if(newbeePolls.length > 0) {
-                    html += `<h5>Новачка</h5>`;
+                    html += `<h5>${Resources.getPhrase("TO_NEWBEE_LABEL")}</h5>`;
                     for(let poll of newbeePolls) {
                         html += this.#getCardHtml(poll);
                     }
@@ -484,13 +488,16 @@ class PollsController {
                 <div class="card-footer">
                     <div class="col">
                         <svg><use href="#clock-hint"/></svg>
-                        <span>${poll.time_to}хв</span>
+                        <span>${poll.time_to} ${Resources.getPhrase("MINUTES_SHORT_LABEL")}</span>
                     </div>
                     <div class="col">
                         <svg><use href="#question-hint"/></svg>
                         <span>
                         ${poll.questions.length} 
-                        ${Utils.getNoun(poll.questions.length, 'питання', 'питання', 'питань')}
+                        ${Utils.getNoun(poll.questions.length, 
+                            Resources.getPhrase("QUESTION_LABEL"), 
+                            Resources.getPhrase("QUESTION_LABEL_2_4"), 
+                            Resources.getPhrase("QUESTIONS_LABEL_5"))}
                         </span>
                     </div>
                     <div class="col">
@@ -509,7 +516,7 @@ class PollsController {
         document.getElementById(this.#section).innerHTML += `
             <div class='empty-page'>
                 <dotlottie-player src="./icons/empty.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>
-                <span>Опитувань немає</span>
+                <span>${Resources.getPhrase("EMPTY_SURVEYS_LABEL")}</span>
             </div>
         `;
 

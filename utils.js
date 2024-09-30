@@ -1,4 +1,5 @@
 import ERRORS from "./errors.js";
+import Resources from "./resources.js";
 
 class Utils {
 
@@ -206,7 +207,8 @@ class Utils {
         if(errorCode == '' || ERRORS[errorCode] == null || typeof ERRORS[errorCode] === 'undefined')
             return console.error(`Utils.throwError: errorCode is not specified`);
 
-        let error = new Error(ERRORS[errorCode]);
+        // let error = new Error(ERRORS[errorCode]);
+        let error = new Error(Resources.getPhrase(errorCode));
         error.code = errorCode;
 
         throw error;

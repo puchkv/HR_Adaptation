@@ -1,5 +1,6 @@
 import Utils from "./utils.js";
 import API from "./API2.js";
+import Resources from './resources.js';
 import User from "./user.js";
 
 class TasksController {
@@ -54,7 +55,7 @@ class TasksController {
 
             html += `
                     <div class="roulette-header">
-                        <h3>Загальна програма</h3>
+                        <h3>${Resources.getPhrase('GENRAL_PROGRAM_LABEL')}</h3>
                         <div class="expand-more" data-type="general">
                             <p></p>
                             <svg><use href="#arrow"/></svg>
@@ -78,7 +79,7 @@ class TasksController {
 
             html += ` 
                 <div class="roulette-header">
-                    <h3>Індивідуальна програма</h3>
+                    <h3>${Resources.getPhrase('INDIVIDUAL_PROGRAM_LABEL')}</h3>
                     <div class="expand-more" data-type="individual">
                         <p></p>
                         <svg><use href="#arrow"/></svg>
@@ -127,7 +128,9 @@ class TasksController {
                         '<svg><use href="#profile"/></svg>'}
                 </div>
                 <div>
-                    <span style="font-weight: bold;">Ініціатор</span>
+                    <span style="font-weight: bold;">
+                        ${Resources.getPhrase('INITIATOR_LABEL')}
+                    </span>
                     <div style="display:flex;gap: 5px;">
                         <p>${task.author.fam} ${task.author.nam} ${task.author.otch}</p>
                         <svg><use href="#telegram"/></svg>
@@ -140,7 +143,9 @@ class TasksController {
                     <svg><use href="#calendar"/></svg>
                 </div>
                 <div>
-                    <span style="font-weight: bold;">Дата виконання</span>
+                    <span style="font-weight: bold;">
+                        ${Resources.getPhrase('DATE_EXECUTE_LABEL')}
+                    </span>
                     <p>${task.date_to}</p>
                 </div>
             </div>`;
@@ -155,7 +160,7 @@ class TasksController {
             taskHtml += `
                 <div class="sp-line"></div>
                 <div class="card p-16">
-                    <h3>Як ви оцінюєте виконання завдання?</h3>
+                    <h3>${Resources.getPhrase('HOW_YOU_RATE_TASK')}</h3>
                     <div class="rating my-12">
                         <svg><use href="#star" /></svg>
                         <svg><use href="#star" /></svg>
@@ -164,7 +169,7 @@ class TasksController {
                         <svg><use href="#star" /></svg>
                     </div>
 
-                    <textarea id="task-comment" placeholder="Коментар до оцінки"></textarea>
+                    <textarea id="task-comment" placeholder="${Resources.getPhrase('RATE_COMMENT_LABEL')}"></textarea>
                 </div>
             `;
 
@@ -192,7 +197,7 @@ class TasksController {
                     let commEl = document.querySelector(".card[data-type='task-comment']");
                     commEl?.removeAttribute("display");
     
-                    Utils.showMainButton("Оцінити", () => this.rate(task.id, rate));
+                    Utils.showMainButton(Resources.getPhrase('RATE_IT_LABEL'), () => this.rate(task.id, rate));
                     Utils.showBackButton(() => Utils.loadScreen('tasks'));
                     return;
                 }
@@ -231,7 +236,7 @@ class TasksController {
             taskHtml += `
                 <div class="card task-comment">
                     <div class="flex-row gap-4 mb-6">
-                        <h3 class="bold">Оцінка ${task.rate}</h3>
+                        <h3 class="bold">${Resources.getPhrase('RATE_LABEL')} ${task.rate}</h3>
                         <svg><use href="#star-filled"/></svg>
                     </div>
 
@@ -266,15 +271,15 @@ class TasksController {
         if(this.#User.isNewbee && task.status_id == this.#statuses.IN_PROGRESS) 
         {   
             Utils.showBackButton(() => Utils.loadScreen('tasks'));
-            Utils.showMainButton("Виконано", function () {
+            Utils.showMainButton(Resources.getPhrase('COMPLETED_LABEL'), function () {
                 API.send("POST_COMPLETE_TASK", JSON.stringify({ id: task.id})
                 ).then(response => {
     
                     if(response !== null && typeof response !== 'undefined'
                         && response.success) 
                     {
-                        Utils.showAnimation("party", "Задачу виконано!", false);
-                        Utils.showMainButton("На головну", () => window.location.reload());
+                        Utils.showAnimation("party", Resources.getPhrase('TASK_COMPLETED'), false);
+                        Utils.showMainButton(Resources.getPhrase('TO_HOME_LABEL'), () => window.location.reload());
                         Utils.hideBackButton();
                     }
     
@@ -285,7 +290,7 @@ class TasksController {
         }
         else 
         {
-            Utils.showMainButton("Назад", function() {
+            Utils.showMainButton(Resources.getPhrase('BACK_LABEL'), function() {
                 Utils.loadScreen('tasks');
                 Utils.hideMainButton();
                 Utils.showNav();
@@ -298,10 +303,14 @@ class TasksController {
         let comm = document.getElementById("task-comment")?.value;
 
         if(comm == null || comm === '' || typeof comm === 'undefined') {
-            if(Utils.isTelegramClient)
-                return window.Telegram.WebApp.showAlert("Не вказано коментар!");
-            else
-                return alert("Вкажіть коментар!");
+            if(Utils.isTelegramClient) {
+                window.Telegram.WebApp.showAlert(Resources.getPhrase('COMMENT_REQUIRED'));
+                return;
+            }
+            else {
+                alert(Resources.getPhrase('COMMENT_REQUIRED'));
+                return;
+            }
         }
 
         API.send("POST_RATE_TASK", JSON.stringify({
@@ -311,8 +320,8 @@ class TasksController {
         })).then(response => {
             
             if(response.success) {
-                Utils.showAnimation("thumb", "Задачу оцінено!", false);
-                Utils.showMainButton("Назад", () => window.location.reload());
+                Utils.showAnimation("thumb", Resources.getPhrase('TASK_RATED'), false);
+                Utils.showMainButton(Resources.getPhrase('BACK_LABEL'), () => window.location.reload());
                 Utils.showBackButton(() => window.location.reload());
             }
 
@@ -350,7 +359,7 @@ class TasksController {
                 <div class="card-footer">
                     <div class="col">
                         <svg><use href="#star"/></svg>
-                        <span>Потребує оцінки</span>
+                        <span>${Resources.getPhrase('NEED_RATE_LABEL')}</span>
                     </div>
                 </div>
             `;
@@ -399,7 +408,7 @@ class TasksController {
         document.getElementById(this.#section).innerHTML += `
             <div class='empty-page'>
                 <dotlottie-player src="./icons/empty.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player>
-                <span>Завдання відсутні, можна відпочити</span>
+                <span>${Resources.getPhrase('TASKS_EMPTY_LABEL')}</span>
             </div>
         `;
     }

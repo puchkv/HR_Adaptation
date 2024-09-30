@@ -6,16 +6,20 @@ import PollsController from './polls.js';
 import TasksController from './tasks.js';
 import TeamController from './team.js';
 import User from './user.js';
-import ERRORS from './errors.js';
+import Resources from './resources.js';
+
 
 window.onload = async () => {
+
+    const locale = Utils.SearchParams.get("locale");
+    Resources.init(locale);
 
     if(Utils.isTelegramClient) {
         //window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         //window.Telegram.WebApp.enableClosingConfirmation()
     }
-    
+
     loading();
 
     initIcons();
@@ -40,10 +44,11 @@ window.onload = async () => {
                 if(User.isUnknown)
                     Utils.throwError("USER_HAS_NO_ROLE");
 
+                
                 if(typeof response.data.card === 'object') {
                     SetProfileData(response.data.card);
                 }
-                    
+               
                 TasksController.initialize(response.data.tasks, User);
                 PollsController.initialize(response.data.polls, User);
                 TeamController.initialize({ 
@@ -94,6 +99,22 @@ window.onload = async () => {
 
     window.addEventListener("app-loaded", function() {
         document.getElementById("loading").remove();
+
+        if(Utils.isTelegramClient) {
+            if(localStorage.getItem('WELCOME_SCREEN_VIEWED') === null
+            || window.Telegram.WebApp.CloudStorage.getItem('WELCOME_SCREEN_VIEWED')  === null) {
+                initWelcomeScreen();
+                Utils.loadScreen('welcome');
+                return;
+            }
+        }
+        else {
+            if(localStorage.getItem('WELCOME_SCREEN_VIEWED') === null) {
+                initWelcomeScreen();
+                Utils.loadScreen('welcome');
+                return;
+            }
+        }
 
         switch(Utils.SearchParams.get("page")) {
             case "polls": Utils.loadScreen("polls"); break;
@@ -171,7 +192,7 @@ const loading = () => {
     el.id = "loading";
     el.innerHTML = `
         <div class="spinner"></div>
-        <span>Зачекайте, будь ласка</span>
+        <span>${Resources.getPhrase('WAIT_PLEASE')}</span>
     `;
 
     document.body.appendChild(el);
@@ -187,19 +208,19 @@ const SetProfileData = (profileData) => {
         let months = Utils.getMonthsDifferenceByDays(profileData.seniority);
 
         switch(months) {
-            case 1: return "Перший місяць в компанії 🐣";
-            case 2: return "Другий місяць в компанії 🤓";
-            case 3: return "Третій місяць в компанії 🥳";
-            case 4: return "Четвертий місяць в компанії";
-            case 5: return "П'ять місяців в компанії";
-            case 6: return "Півроку в компнаії";
+            case 1: return `${Resources.getPhrase('1_СP_MONTH')} 🐣`;
+            case 2: return `${Resources.getPhrase('2_СP_MONTH')} 🤓`;
+            case 3: return `${Resources.getPhrase('3_СP_MONTH')} 🥳`;
+            case 4: return `${Resources.getPhrase('4_СP_MONTH')}`;
+            case 5: return `${Resources.getPhrase('5_СP_MONTH')}`;
+            case 6: return `${Resources.getPhrase('HALF_СP_MONTH')}`;
             case 7: 
             case 8:
             case 9:
             case 10:
-            case 11: return "Більше півроку в компанії";
-            case 12: return "Рік в компанії";
-            default: return "Більше року в компанії";
+            case 11: return `${Resources.getPhrase('MORE_CP_MONTH')}`;
+            case 12: return `${Resources.getPhrase('YEAR_CP_MONTH')}`;
+            default: return `${Resources.getPhrase('FULL_CP_MONTH')}`;
         }
     }
 
@@ -295,7 +316,7 @@ const init = (element) => {
         let expLabel = expander.querySelector("p");
     
         if(typeof expLabel !== 'undefined' && expLabel !== null)
-            expLabel.textContent = "Розгорнути";
+            expLabel.textContent = Resources.getPhrase("EXPAND_LABEL");
     
         expander.onclick = () => expandCards(expander.dataset.type);
     });
@@ -327,12 +348,37 @@ const init = (element) => {
 
 const initializeComponents = () => {
 
+    // Multilanguage
+    var nav = document.querySelector("nav");
+    nav.innerHTML = `
+        <div data-route='tasks' class="checked">
+            <svg><use href="#note"/></svg>
+            <span>${Resources.getPhrase("TASKS_LABEL")}</span>
+        </div>
+        <div data-route="teamMembers">
+            <svg class="icon-medium"><use href="#team" /></svg>
+            <span>${Resources.getPhrase("TEAM_LABEL")}</span>
+        </div>
+        <div data-route="polls">
+            <svg><use href="#question"/></svg>
+            <span>${Resources.getPhrase("POLLS_LABEL")}</span>
+        </div>
+    `;
+
+    var surveyResult = document.getElementById("pollSuccess");
+    surveyResult.innerHTML = `
+        <picture class="anim-sticker">
+            <object type="image/gif" data="icons/success.gif"></object>
+        </picture>
+        <h2 style='text-align:center'>${Resources.getPhrase("RESULT_SENED_SUCCESS")}</h2>
+    `;
+
     document.querySelectorAll(".expand-more").forEach(expander => {
 
         let expLabel = expander.querySelector("p");
     
         if(typeof expLabel !== 'undefined' && expLabel !== null)
-            expLabel.textContent = "Розгорнути";
+            expLabel.textContent = Resources.getPhrase("EXPAND_LABEL");
     
         expander.onclick = () => expandCards(expander.dataset.type);
     });
@@ -385,7 +431,70 @@ const initializeComponents = () => {
         }
     });
 
+
+
+
 }
+
+const initWelcomeScreen = () => {
+    
+    const section = document.getElementById('welcome');
+
+    section.innerHTML = `
+        <h1>
+            👋 ${Resources.getPhrase('WELCOME_IN_HUB')}
+        </h1>
+
+        <div class = "icon-paragraph-list">
+            <div class = "icon-paragraph">
+                <svg><use href="#note"/></svg>
+                <div>
+                    <h3>
+                        ${Resources.getPhrase('ADPT_TASKS_LABEL')}
+                    </h3>
+                    <p>
+                        ${Resources.getPhrase('MAKE_YOUR_TASKS')}
+                    </p>
+                </div>
+            </div>
+
+            <div class = "icon-paragraph">
+                <svg><use href="#chat"/></svg>
+                <div>
+                    <h3>
+                        ${Resources.getPhrase('POLLS_LABEL')}
+                    </h3>
+                    <p>
+                        ${Resources.getPhrase('ANSWER_YOUR_POLLS')} 👐
+                    </p>
+                </div>
+            </div>
+
+            <div class = "icon-paragraph">
+                <svg><use href="#bell"/></svg>
+                <div>
+                    <h3>
+                        ${Resources.getPhrase('NOTIFACTION_LABEL')}
+                    </h3>
+                    <p>
+                        ${Resources.getPhrase('TAKE_YOUR_NOTIFICATIONS')}
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    Utils.showMainButton(Resources.getPhrase('LETS_GO'), () => {
+        if(Utils.isTelegramClient)
+            window.Telegram.WebApp.CloudStorage.setItem("WELCOME_SCREEN_VIEWED", true);
+
+        localStorage.setItem("WELCOME_SCREEN_VIEWED", true);
+        Utils.hideMainButton();
+        Utils.loadScreen("tasks");
+    });
+}
+
+
 
 // add nav-height margin to not overlaping content
 // const setNavMargin = () => {
@@ -430,7 +539,7 @@ function expandCards(cardType) {
     }
 
     if(typeof expLabel !== 'undefined' && expLabel !== null)
-        expLabel.textContent = 'Розгорнути';
+        expLabel.textContent = Resources.getPhrase("EXPAND_LABEL");
     
     let cards = document.querySelector(
         `.cards[data-type="${cardType}"]`);
@@ -445,7 +554,7 @@ function expandCards(cardType) {
         cards.classList.remove('expanded');
         
         if(typeof expLabel !== 'undefined' && expLabel !== null)
-            expLabel.textContent = 'Розгорнути';
+            expLabel.textContent = Resources.getPhrase("EXPAND_LABEL");
     } 
     else 
     {
@@ -457,7 +566,7 @@ function expandCards(cardType) {
         cards.classList.add('expanded');
 
         if(typeof expLabel !== 'undefined' && expLabel !== null)
-            expLabel.textContent = 'Згорнути';
+            expLabel.textContent = Resources.getPhrase("COLLAPSE_LABEL");
     }
 }
 

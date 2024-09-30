@@ -1,5 +1,6 @@
 import API from "./API2.js";
 import Utils from "./utils.js";
+import Resources from './resources.js';
 
 class TeamController {
 
@@ -27,7 +28,7 @@ class TeamController {
             <div class="roulette">
 
                 <div class="roulette-header">
-                    <p>Важливі</p>
+                    <p>${Resources.getPhrase('IMPORTANT_LABEL')}</p>
                 </div>
 
                 <div class="cards expanded">
@@ -37,17 +38,17 @@ class TeamController {
         {
             if(mentorIsHead) 
             {
-                html += this.#getMemberCard(this.#members.head, "Керівник та наставник");
+                html += this.#getMemberCard(this.#members.head, Resources.getPhrase('LEAD_MENTOR_LABEL'));
             }
             else 
             {
-                html += this.#getMemberCard(this.#members.head, "Керівник");
-                html += this.#getMemberCard(this.#members.mentor, "Наставник");
+                html += this.#getMemberCard(this.#members.head, Resources.getPhrase('LEAD_LABEL'));
+                html += this.#getMemberCard(this.#members.mentor, Resources.getPhrase('MENTOR_LABEL'));
             }
         }
 
 
-        html += this.#getMemberCard(this.#members.hr, "HR менеджер");
+        html += this.#getMemberCard(this.#members.hr, Resources.getPhrase('HR_MANAGER_LABEL'));
         html += `</div>`;
 
         html += `

@@ -3,7 +3,7 @@ import Utils from './utils.js';
 
 class API {
 
-    #initData = "query_id=AAHUWZZ3AAAAANRZlnfYKkqY&user=%7B%22id%22%3A2006342100%2C%22first_name%22%3A%22%D0%AE%D1%80%D1%96%D0%B9%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22lyubchak%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1697117294&hash=dc39d00ad19160a006b7737be6ee9c6def17a723302b9985ad5aa088c8b6fef2";
+    #initData = "query_id=AAHUWZZ3AAAAANRZlnc7gQjs&user=%7B%22id%22%3A2006342100%2C%22first_name%22%3A%22%D0%AE%D1%80%D1%96%D0%B9%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22Liubchak_YO%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1727184518&hash=eb7821f12880eea10f8de3b1f4ac590724ff622ce619b44d0a28d939e6b5f5d8";
 
     // by default token expired time = 30 minutes
     #getNewExpiredTime() {
@@ -135,6 +135,8 @@ class API {
 
         if(typeof initData === 'undefined' || initData === null || initData === '')
             initData = this.#initData;
+
+        console.log(this.#initData);
 
         route.url.searchParams.append("initData", initData);
 

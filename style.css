@@ -107,6 +107,7 @@ svg {
     background-color: var(--surface-color);
 }
 
+
 .welcome-screen > h1 {
     margin-top: 25px;
 }
@@ -120,9 +121,15 @@ svg {
 
 .icon-paragraph {
     display: flex;
-    gap: 14px;
+    gap: 18px;
     align-items: start;
 }
+
+.icon-paragraph > svg {
+    transform: scale(1.7);
+    align-self: baseline;
+}
+
 
 .icon-paragraph > div {
     display: flex;
@@ -131,8 +138,11 @@ svg {
     gap: 6px;
 }
 
+
 .icon-paragraph > div > h3 {
     font-size: 16px;
+    text-align: left;
+    font-weight: bold;
 }
 
 .icon-paragraph > div > p {
@@ -505,12 +515,12 @@ svg {
     display: flex;
     gap: 6px;
     flex: 33%;
+    flex-basis: 1;
     min-width: fit-content;
-    align-items: center;
     line-height: 20px;
     font-size: 14px;
     color: var(--hint-color);
-    align-items: center;
+    align-items: flex-start;
 }
 
 .profile-icon-small {
@@ -1036,6 +1046,7 @@ svg[data-type="F"] {
     stroke:none;
     fill: var(--link-color) !important;
 }
+
 
 svg[data-type="FN"] {
     stroke-width: 0;

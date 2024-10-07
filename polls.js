@@ -369,6 +369,7 @@ class PollsController {
             case User.Roles.HR: polls = this.#polls; break;
             default: polls = null; break;
         }
+        
 
         if(polls == null || polls.length == 0) {
             return this.showEmpty();

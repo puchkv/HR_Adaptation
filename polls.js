@@ -41,6 +41,7 @@ class PollsController {
 
         this.#polls = polls
             //.filter(p => p.recipient_type_id === this.#User.Role)
+            //.filter(p => p.recipient.inn = this.#User.Inn)
             .filter(p => moment() >= moment(p.date_send, "DD.MM.YYYY"))
             .sort((p1, p2) => this.sort(p1, p2));
 
@@ -360,12 +361,12 @@ class PollsController {
             return this.showEmpty();
         }
 
-        let polls = this.#polls;
+        let polls = null;
 
         switch(this.#User.Role) {
             case User.Roles.Newbee: polls = this.#polls.filter(p => p.recipient_type_id == 1); break;
-            case User.Roles.Mentor: polls = this.#polls.filter(p => p.recipient_type_id == 2); break;
-            case User.Roles.Head: polls = this.#polls.filter(p => p.recipient_type_id == 2); break;
+            case User.Roles.Mentor: polls = this.#polls.filter(p => p.recipient_type_id == 2 || p.recipient_type_id == 3); break;
+            case User.Roles.Head: polls = this.#polls.filter(p => p.recipient_type_id == 2 || p.recipient_type_id == 3); break;
             case User.Roles.HR: polls = this.#polls; break;
             default: polls = null; break;
         }

@@ -131,12 +131,12 @@ class TasksController {
                     <span style="font-weight: bold;">
                         ${Resources.getPhrase('INITIATOR_LABEL')}
                     </span>
-                    <div style="display:flex;gap: 5px;">
+                    <div style="display:flex;gap: 5px;cursor:pointer;" id="authorlink"> 
                         <p>${task.author.fam} ${task.author.nam} ${task.author.otch}</p>
                         ${
                             this.#isEmpty(task.author.user_url)
                                 ? ''
-                                : '<svg><use href="#telegram" id="authorlink"/></svg>'
+                                : '<svg><use href="#telegram"/></svg>'
                         }
                     </div>
                 </div>
@@ -157,7 +157,9 @@ class TasksController {
         document.getElementById("taskView").innerHTML = taskHtml;
 
         document.getElementById("authorlink").onclick = () => {
-            window.Telegram.WebApp.openTelegramLink(task.author.user_url);
+            if(task.author?.user_url !== '') {
+                window.Telegram.WebApp.openTelegramLink(task.author.user_url);
+            }
         };
 
         console.log(`User INN: ${this.#User.Inn}, Author INN: ${task.author.inn}`);

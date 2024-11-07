@@ -107,7 +107,7 @@ class TeamController {
                     }
                 </div>
                 <div class='member-card' data-url='${member?.user_url}'>
-                    <span>
+                    <span class="author-link" style="cursor:pointer;">
                         <span style="font-weight: bold;">
                             ${  
                                 member?.fam + ' ' + 
@@ -118,7 +118,7 @@ class TeamController {
                         ${
                             this.#isEmpty(member?.user_url) 
                                 ? '' 
-                                : '<svg><use href="#telegram" class="author-link"/></svg>'
+                                : '<svg><use href="#telegram"/></svg>'
                         }
                     </span>
                     <p>${ pos !== '' ? pos : member?.pos}</p>

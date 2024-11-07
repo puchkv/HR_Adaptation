@@ -106,7 +106,7 @@ class TeamController {
                         '<svg><use href="#profile"/></svg>'
                     }
                 </div>
-                <div class='member-card' data-url='${member?.user_url}}'>
+                <div class='member-card' data-url='${member?.user_url}'>
                     <span>
                         <span style="font-weight: bold;">
                             ${  

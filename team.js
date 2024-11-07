@@ -133,7 +133,7 @@ class TeamController {
         this.#element.querySelectorAll(".author-link").forEach(link => {
             link.onclick = () => {
 
-                const memberCard = this.closest('.member-card'); // Найти ближайший родительский элемент с классом 'member-card'
+                const memberCard = link.closest('.member-card'); // Найти ближайший родительский элемент с классом 'member-card'
                 const url = memberCard?.getAttribute('data-url'); // Получить значение 'data-url'
 
                 window.Telegram.WebApp.openTelegramLink(url);

@@ -133,7 +133,7 @@ class TasksController {
                     </span>
                     <div style="display:flex;gap: 5px;">
                         <p>${task.author.fam} ${task.author.nam} ${task.author.otch}</p>
-                        <svg><use href="#telegram"/></svg>
+                        <svg><use href="#telegram" id="authorlink"/></svg>
                     </div>
                 </div>
             </div>
@@ -151,6 +151,10 @@ class TasksController {
             </div>`;
 
         document.getElementById("taskView").innerHTML = taskHtml;
+
+        document.getElementById("authorlink").onclick = () => {
+            window.Telegram.WebApp.openTelegramLink(task.author.user_url);
+        };
 
         console.log(`User INN: ${this.#User.Inn}, Author INN: ${task.author.inn}`);
         console.log(this.#User.Inn == task.author.inn);

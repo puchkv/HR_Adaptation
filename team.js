@@ -106,13 +106,16 @@ class TeamController {
                         '<svg><use href="#profile"/></svg>'
                     }
                 </div>
-                <div class='member-card'>
-                    <span style="font-weight: bold;">
-                        ${  
-                            member?.fam + ' ' + 
-                            member?.nam + ' ' +
-                            member?.otch
-                        }
+                <div class='member-card' data-url='${member?.user_url}}'>
+                    <span>
+                        <span style="font-weight: bold;">
+                            ${  
+                                member?.fam + ' ' + 
+                                member?.nam + ' ' +
+                                member?.otch
+                            }
+                        </span>
+                        <svg><use href="#telegram" class='author-link'/></svg>
                     </span>
                     <p>${ pos !== '' ? pos : member?.pos}</p>
                 </div>
@@ -124,6 +127,16 @@ class TeamController {
         this.#element.querySelectorAll(".card").forEach(card => {
             card.onclick = () => {
                 Utils.expandCards(card.parentElement.dataset.type);
+            }
+        });
+
+        this.#element.querySelectorAll(".author-link").forEach(link => {
+            link.onclick = () => {
+
+                const memberCard = this.closest('.member-card'); // Найти ближайший родительский элемент с классом 'member-card'
+                const url = memberCard?.getAttribute('data-url'); // Получить значение 'data-url'
+
+                window.Telegram.WebApp.openTelegramLink(url);
             }
         });
     }

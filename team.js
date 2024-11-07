@@ -118,7 +118,7 @@ class TeamController {
                         ${
                             this.#isEmpty(member?.user_url) 
                                 ? '' 
-                                : <svg><use href="#telegram" class='author-link'/></svg>
+                                : '<svg><use href="#telegram" class="author-link"/></svg>'
                         }
                     </span>
                     <p>${ pos !== '' ? pos : member?.pos}</p>

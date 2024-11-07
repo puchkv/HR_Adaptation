@@ -133,7 +133,11 @@ class TasksController {
                     </span>
                     <div style="display:flex;gap: 5px;">
                         <p>${task.author.fam} ${task.author.nam} ${task.author.otch}</p>
-                        <svg><use href="#telegram" id="authorlink"/></svg>
+                        ${
+                            this.#isEmpty(task.author.user_url)
+                                ? ''
+                                : '<svg><use href="#telegram" id="authorlink"/></svg>'
+                        }
                     </div>
                 </div>
             </div>
@@ -425,7 +429,13 @@ class TasksController {
             || moment(t1.date_to, format) - moment(t2.date_to, format));
     }
 
-
+    #isEmpty(value) {
+        return (
+            value === undefined || // значение не определено
+            value === null ||      // значение null
+            value === ''        // пустая строка
+        );
+    }
 }
 
 export default new TasksController;

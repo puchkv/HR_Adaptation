@@ -115,7 +115,11 @@ class TeamController {
                                 member?.otch
                             }
                         </span>
-                        <svg><use href="#telegram" class='author-link'/></svg>
+                        ${
+                            this.#isEmpty(member?.user_url) 
+                                ? '' 
+                                : <svg><use href="#telegram" class='author-link'/></svg>
+                        }
                     </span>
                     <p>${ pos !== '' ? pos : member?.pos}</p>
                 </div>
@@ -139,6 +143,14 @@ class TeamController {
                 window.Telegram.WebApp.openTelegramLink(url);
             }
         });
+    }
+
+    #isEmpty(value) {
+        return (
+            value === undefined || // значение не определено
+            value === null ||      // значение null
+            value === ''        // пустая строка
+        );
     }
 }
 

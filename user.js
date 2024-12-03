@@ -15,7 +15,7 @@ class User {
         Personnel: 5,   // Працівник кадрів
         Chaperone: 6,   // Супроводжуючий
         Lawyer: 7,      // Юрист
-        Educator: 8,    // Провідник навчання
+        Educator: 8,    // Провідник навчання,
         UNKNOWN: -1
     };
 
@@ -66,9 +66,13 @@ class User {
             case adaptation.sup?.inn: return this.Roles.Chaperone;
             case adaptation.advoc?.inn: return this.Roles.Lawyer;
             case adaptation.edu?.inn: return this.Roles.Educator;
-
             // to do add new role
             default: return this.Roles.UNKNOWN;
+        }
+
+        if(adaptation.pod_kers.some(pod => pod.head.inn === inn) && this.Role == null) 
+        {
+            return this.Roles.Head;    
         }
     }
     

@@ -84,10 +84,10 @@ export default {
         "LV": "Piekļuve liegta"
     },
     "RESPONSE_FAILED": {
-        "UK": "Помилка отримання відповіді від сервера, або посилання не існує",
-        "RU": "Ошибка получения ответа от сервера, либо ссылки не существует",
-        "EN": "Server response error or link does not exist",
-        "LV": "Servera atbildes kļūda vai saite neeksistē"
+        "UK": "Помилка отримання відповіді від сервера,<br>або посилання не існує",
+        "RU": "Ошибка получения ответа от сервера,<br>либо ссылки не существует",
+        "EN": "Server response error<br>or link does not exist",
+        "LV": "Servera atbildes kļūda<br>vai saite neeksistē"
     },
     "UNAUTHORIZED": {
         "UK": "Не вистачає даних для отримання прав доступу",

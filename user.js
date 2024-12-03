@@ -66,13 +66,9 @@ class User {
             case adaptation.sup?.inn: return this.Roles.Chaperone;
             case adaptation.advoc?.inn: return this.Roles.Lawyer;
             case adaptation.edu?.inn: return this.Roles.Educator;
+            case adaptation.pod_kers.some(pod => pod.head.inn === inn): return this.Roles.Head;
             // to do add new role
             default: return this.Roles.UNKNOWN;
-        }
-
-        if(adaptation.pod_kers.some(pod => pod.head.inn === inn) && this.Role == null) 
-        {
-            return this.Roles.Head;    
         }
     }
     

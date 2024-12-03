@@ -41,6 +41,10 @@ window.onload = async () => {
                 User.Inn = inn;
                 User.Role = User.GetRole(inn, response.data);
 
+                if(User.Role === User.Roles.UNKNOWN && response.data.pod_kers.some(pod => pod.head.inn === inn)) {
+                    User.Role = User.Roles.Head;    
+                }
+
                 if(User.isUnknown)
                     Utils.throwError("USER_HAS_NO_ROLE");
 
